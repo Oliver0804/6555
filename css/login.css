@@ -1,0 +1,95 @@
+@charset "utf-8";
+/* Login */
+.ct-login-bg{ background-color: #56baed; background: url(../img/loginbg.jpg)}
+.ct-login{ display: flex; align-items: center; flex-direction: column;  justify-content: center; width: 100%; min-height: 100%; padding: 80px 20px 20px;}
+.ct-login a { color: #799bd8;display:inline-block; text-decoration: none; font-weight: 400;}
+.ct-login h2 { text-align: center; font-size: 1rem; font-weight: 600; text-transform: uppercase; display:inline-block; margin: 40px 8px 10px 8px;  color: #cccccc;}
+.ct-login-content{ -webkit-border-radius: 10px 10px 10px 10px; border-radius:4px; background: #fff; width: 90%; max-width: 450px; position: relative; padding: 0px; -webkit-box-shadow: 0 30px 55px 0 rgba(0,0,0,0.3); box-shadow: 0 30px 60px 0 rgba(0,0,0,0.3); }
+.ct-login form{margin-bottom: 0;}
+.ct-login-form{padding:0 55px;}
+.ct-login-footer{ background-color: #f6f6f6; border-top: 1px solid #dce8f1; padding: 25px 55px; text-align: center; -webkit-border-radius: 0 0 10px 10px; border-radius: 0 0 10px 10px;}
+.fadeInDown{ -webkit-animation-name: fadeInDown; animation-name: fadeInDown;-webkit-animation-duration: 1s;animation-duration: 1s;-webkit-animation-fill-mode: both; animation-fill-mode: both;}
+@-webkit-keyframes fadeInDown { 0% { opacity: 0; -webkit-transform: translate3d(0, -100%, 0);transform: translate3d(0, -100%, 0);}
+  100% { opacity: 1;  -webkit-transform: none; transform: none; }}
+@keyframes fadeInDown { 0% {  opacity: 0; -webkit-transform: translate3d(0, -100%, 0); transform: translate3d(0, -100%, 0); }
+  100% { opacity: 1; -webkit-transform: none; transform: none;}}
+/* Simple CSS3 Fade-in Animation */
+@-webkit-keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+@-moz-keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+@keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+.fadeIn { opacity:0; -webkit-animation:fadeIn ease-in 1;-moz-animation:fadeIn ease-in 1; animation:fadeIn ease-in 1; -webkit-animation-fill-mode:forwards; -moz-animation-fill-mode:forwards; animation-fill-mode:forwards;-webkit-animation-duration:1s; -moz-animation-duration:1s; animation-duration:1s;}
+.fadeIn.first { -webkit-animation-delay: 0.4s;-moz-animation-delay: 0.4s;animation-delay: 0.4s;text-align: center;}
+.fadeIn.second {-webkit-animation-delay: 0.6s; -moz-animation-delay: 0.6s; animation-delay: 0.6s;}
+.fadeIn.third { -webkit-animation-delay: 0.8s; -moz-animation-delay: 0.8s; animation-delay: 0.8s;}
+.fadeIn.fourth { -webkit-animation-delay: 1s; -moz-animation-delay: 1s; animation-delay: 1s;}
+.underline:after {display: block; left: 0; bottom: -10px; width: 0;  height: 2px; background-color: #4670bb; content: "";transition: width 0.2s;}
+.underline:hover {color: #4670bb;}
+.underline:hover:after{ width: 100%;}
+.ct-login-icon{ width:40%; margin-bottom: 5px;}
+.ct-login-icon2{ background-image: url(../img/loginicon-2.svg) ;position: absolute;top: 100px;left:80px;width: 50px;height: 30px;}
+.ct-login-icon3{ background-image: url(../img/loginicon-3.svg) ;position: absolute;top: 130px;right:80px;width: 20px;height: 20px;}
+.ct-login-icon4{ background-image: url(../img/loginicon-3.svg) ;position: absolute;top: 220px;left:100px;width: 20px;height: 20px;background-size: 1.5em;}
+.ct-login-icon5{ background-image: url(../img/loginicon-2.svg) ;position: absolute;top: 220px;right:90px;width: 50px;height: 30px;}
+.ct-login-icon6{ background-image: url(../img/loginicon-4.svg) ;position: absolute;top: 180px;left:80px;width: 20px;height: 20px;}
+.ct-login-icon7{ background-image: url(../img/loginicon-4.svg) ;position: absolute;top: 160px;right:110px;width: 20px;height: 20px;}
+.ct-login-icon8{ background-image: url(../img/loginicon-4.svg) ;position: absolute;top: 90px;right:140px;width: 20px;height: 20px;background-size: 1.5em;}
+.ct-login-icon9{ background-image: url(../img/loginicon-4.svg) ;position: absolute;top: 90px;left:150px;width: 20px;height: 20px;}
+.ct-login-icon10{ background-image: url(../img/loginicon-4.svg) ;position: absolute;top:240px;right:150px;width: 20px;height: 20px;}
+.ct-login-icon11{ background-image: url(../img/loginicon-4.svg) ;position: absolute;top:140px;left:100px;width: 20px;height: 20px;background-size: 1.6em;}
+.ct-login-logo{ margin: 35px auto 15px; display: block; max-width: 183px;}
+.ct-login-title {font-weight: bold; color: #767676; margin-bottom: 15px;}
+.ct-login-topline { width: 100%; height: 5px; background: #4670bb; border-top-left-radius: 10px; border-top-right-radius: 10px;}
+.ct-login-close{ width: 30px; height: 30px; background: #f5f5f5; position: absolute; border-radius: 30px; right: 0;margin-top: 0.6em; margin-right: 0.6em; cursor: pointer;transition: all 0.3s ease-in-out;-moz-transition: all 0.3s ease-in-out;-webkit-transition: all 0.3s ease-in-out;}
+.ct-login-close svg{fill: #c4c4c4; width: 1.5em; height: 1.5em;vertical-align: middle; margin-top: 0.08em;}
+.ct-login-close:hover svg{ fill: #999999;}
+.oauth-login-logo{ margin: 35px auto 15px; display: block; max-width: 200px;}
+.ct-login-tab{width:50%;display: inline-block; padding:5px;margin-bottom: 15px;}
+.ct-login-tab .tab{ width: 100%; min-height: 100px; border: 1px solid #c7c7c7; border-radius: 4px; padding: 5px;transition: all 0.3s ease-in-out;-moz-transition: all 0.3s ease-in-out;-webkit-transition: all 0.3s ease-in-out; cursor: pointer;}
+.ct-login-tab .tab svg{ fill: #949494; width:2em;  height:2em; }
+.ct-login-tab .tab:hover svg,.ct-login-tab .tab:focus svg,.ct-login-tab .tab:active svg,.ct-login-tab .tab.active svg{ fill: #4670bb;}
+.ct-login-tab .tab:hover,.ct-login-tab .tab:focus,.ct-login-tab .tab:active,.ct-login-tab .tab.active{ border: 1px solid #4670bb;}
+.ct-login-tab .tab:hover .tab-title,.ct-login-tab .tab:focus .tab-title,.ct-login-tab .tab:active .tab-title,.ct-login-tab .tab.active .tab-title{color:#4670bb;}
+.ct-login .login-link {min-height: 150px; padding: 0 50px 10px; border-top: 1px solid #adc5ef; background:#ebf2ff;-webkit-border-radius: 0 0 10px 10px; border-radius: 0 0 10px 10px;}
+.login-link .tab{ min-height: 50px;}
+.link-tab{ width: 50%;display: inline-block; padding: 10px;}
+.link-tab .tab{ width: 100%; min-height:50px; border-radius: 2px; padding: 8px;font-weight: bold; cursor: pointer; position:relative; background:rgba(255,255,255,0.3);}
+.link-tab .tab.qq,.link-tab .tab.go{border: 1px solid #90bde2; color: #70a7d4; }
+.link-tab .tab.qq:hover,.link-tab .tab.go:hover{border: 1px solid #51AAF2; color:#51AAF2;}
+.link-tab .tab.wc{ border: 1px solid #89ce85; color: #6ab166;}
+.link-tab .tab.wc:hover{border: 1px solid #50B749; color:#50B749;}
+.link-tab .tab.go{border: 1px solid #90bde2; color: #70a7d4; }
+.link-tab .tab.go:hover{border: 1px solid #51AAF2; color:#51AAF2;}
+.login-link .link-title{ display: table; margin: 0 auto; width: 100px; text-align: center;}
+.link-tab .tab.qq svg,.link-tab .tab.go svg{ fill: #9fc7e8; width:2em; height:2em; position: absolute; right:8px; top:8px;}
+.link-tab .tab.qq:hover svg,.link-tab .tab.go:hover svg{ fill: #51AAF2;}
+.link-tab .tab.wc svg{ fill:#77bb74; width:2em; height:2em; position: absolute; right:8px; top:8px; }
+.link-tab .tab.wc:hover svg{ fill:#50B749;}
+.oauth-login-bg{ padding: 0px 60px 30px; text-align: center;}
+.signup-feeback{  margin-top:10px;  color: #4670bb;}
+.checkcircle-box {  display:inline-block;  position: relative; width:150px;}
+.checkcircle-blue {  stroke:#4670bb;}
+.checkcircle-box  .circular circle.path {  stroke-dasharray: 330; stroke-dashoffset: 0; stroke-linecap: round; opacity: 0.4; animation: 0.7s draw-circle ease-out;}
+/*------- Checkmark ---------*/
+.checkcircle-box .checkmark{ stroke-width: 6.25; stroke-linecap: round;position:absolute; top: 56px; left: 49px; width: 52px; height: 40px;}
+.checkcircle-box .checkmark path { animation: 1s draw-check ease-out;}
+@keyframes draw-circle {  0% { stroke-dasharray: 0,330; stroke-dashoffset: 0; opacity: 1;} 80% { stroke-dasharray: 330,330; stroke-dashoffset: 0; opacity: 1; } 100%{ opacity: 0.4;}}
+@keyframes draw-check { 0% { stroke-dasharray: 49,80; stroke-dashoffset: 48; opacity: 0; } 50% { stroke-dasharray: 49,80;  stroke-dashoffset: 48; opacity: 1;} 100% { stroke-dasharray: 130,80; stroke-dashoffset: 48;}}
+.ct-animated1{-webkit-animation-duration:3s; animation-duration:3s; -webkit-animation-fill-mode: both; animation-fill-mode: both;animation-iteration-count:infinite;}
+.ct-animated2{-webkit-animation-duration:1.8s; animation-duration:1.8s; -webkit-animation-fill-mode: both; animation-fill-mode: both;animation-iteration-count:infinite;}
+.ct-animated3{-webkit-animation-duration:2.2s; animation-duration:2.2s; -webkit-animation-fill-mode: both; animation-fill-mode: both;animation-iteration-count:infinite;}
+@-webkit-keyframes ct-bounceInDown1{ 0% { -webkit-transform: translateY(-5px); transform: translateY(-5px);} 60% { -webkit-transform: translateY(0px); transform: translateY(0px);}	100% {
+ -webkit-transform: translateY(-5px); transform: translateY(-5px);}}
+@keyframes ct-bounceInDown1 {0% { -webkit-transform: translateY(-5px);-ms-transform: translateY(-5px);transform: translateY(-5px);} 60% { -webkit-transform: translateY(0px); -ms-transform: translateY(0px);transform: translateY(0px);}100% { -webkit-transform: translateY(-5px); -ms-transform: translateY(-5px);transform: translateY(-5px);}}
+.ct-bounceInDown1{-webkit-animation-name: ct-bounceInDown1; animation-name: ct-bounceInDown1;}
+@-webkit-keyframes ct-bounceInDown2{ 0% { -webkit-transform: translateY(-5px); transform: translateY(-5px);} 40% { -webkit-transform: translateY(0px); transform: translateY(0px);}	100% {
+ -webkit-transform: translateY(-5px); transform: translateY(-5px);}}
+@keyframes ct-bounceInDown2 {0% { -webkit-transform: translateY(-5px);-ms-transform: translateY(-5px);transform: translateY(-5px);} 40% { -webkit-transform: translateY(0px); -ms-transform: translateY(0px);transform: translateY(0px);}100% { -webkit-transform: translateY(-5px); -ms-transform: translateY(-5px);transform: translateY(-5px);}}
+.ct-bounceInDown2{-webkit-animation-name: ct-bounceInDown2; animation-name: ct-bounceInDown2;}
+@-webkit-keyframes ct-bounceInDown3{ 0% { -webkit-transform: translateY(-5px); transform: translateY(-5px);} 40% { -webkit-transform: translateY(0px); transform: translateY(0px);}	100% {
+ -webkit-transform: translateY(-5px); transform: translateY(-5px);}}
+@keyframes ct-bounceInDown3 {0% { -webkit-transform: translateY(-5px);-ms-transform: translateY(-5px);transform: translateY(-5px);} 40% { -webkit-transform: translateY(0px); -ms-transform: translateY(0px);transform: translateY(0px);}100% { -webkit-transform: translateY(-5px); -ms-transform: translateY(-5px);transform: translateY(-5px);}}
+.ct-bounceInDown3{-webkit-animation-name: ct-bounceInDown3; animation-name: ct-bounceInDown3;}
+
+@-webkit-keyframes ct-bounceInDown4{ 0% { -webkit-transform: translateY(-5px) rotate(180deg); transform: translateY(-5px) rotate(180deg);} 60% { -webkit-transform: translateY(0px) rotate(180deg); transform: translateY(0px) rotate(180deg);}	100% {-webkit-transform: translateY(-5px) rotate(180deg); transform: translateY(-5px) rotate(180deg);}}
+@keyframes ct-bounceInDown4 {0% { -webkit-transform: translateY(-5px) rotate(180deg) ;-ms-transform: translateY(-5px) rotate(180deg);transform: translateY(-5px) rotate(180deg);} 60% { -webkit-transform: translateY(0px) rotate(180deg); -ms-transform: translateY(0px) rotate(180deg);transform: translateY(0px) rotate(180deg);}100% { -webkit-transform: translateY(-5px) rotate(180deg); -ms-transform: translateY(-5px) rotate(180deg);transform: translateY(-5px) rotate(180deg);}}
+.ct-bounceInDown4{-webkit-animation-name: ct-bounceInDown4; animation-name: ct-bounceInDown4;}

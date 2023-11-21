@@ -1,0 +1,22 @@
+<header>
+  <a href="#top" accesskey="T" id="top" :title="$t('mainPart.top')">:::</a>
+  <a v-if="ct$currentSite.showlogin && !ct$isLogin" :href="ct$loginUrl" v-t="'mainPart.login'"></a>
+  <a v-if="ct$isLogin" :href="ct$logoutUrl" v-t="'mainPart.logout'"></a>
+  <a href="#sitemap" @click="$emit('update:page', 'focusedPage','sitemap')" v-t="'mainPart.guidedtour'"></a>
+  <a href="index" v-t="'global.home'"></a>
+  <a v-if="ct$currentSite.category == 'sub'" href="/nss/p/index" v-t="'mainPart.platform'"></a>
+  <a href="/dashboard" v-if="ct$dashboard.enabled" v-t="'CB070'"></a>
+  <div :class="{'active' : langHasFocus}" @focusin="langHasFocus=true" @focusout="langHasFocus=false" v-if="ct$siteserver.langs.length > 1" class="dropdown">
+    <button class="dropbtn"> {{ $t('mainPart.'+language) }}
+      <ct-svg key="angle-down" class="line-block" alt="angle-down" svg-src="#{BASE}/img/angle-down.svg"></ct-svg>
+    </button>
+    <div class="dropdown-content">
+      <a href="#" v-for="item in ct$siteserver.langs" @click.prevent="$emit('update:lang', 'language', item)" v-t="'mainPart.'+item"></a>
+    </div>
+  </div>
+  <div class="fontsize">
+    <button @click="setFontSize('0.9rem')" v-t="'mainPart.small'" title="字級-小"></button>
+    <button @click="setFontSize('1rem')" v-t="'mainPart.middle'" title="字級-中"></button>
+    <button @click="setFontSize('1.1rem')" v-t="'mainPart.large'" title="字級-大"></button>
+  </div>
+</header>

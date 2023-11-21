@@ -1,0 +1,6 @@
+<draggable :element="'ul'" :list="node" class="list-unstyled mh10" :options="{ghostClass: 'nav-ghost' , dragClass: 'nav-drag'  , group:'nav' , chosenClass:'nav-chosen' , animation: 150}">
+    <li v-for="(item , index) in node">
+        <a href="#" @click.prevent>{{ item.hide ?  '(' + $t('mainPart.hide') + ')' : '' }}<span>{{ newNumber.split('-').splice(1).join('-') }}-{{index+1}}</span>{{item.heading}} <button class="btn-xs border-no bg-no float-r" @click="changeSelect( item )"><ct-svg key="ellipsis-v" alt="ellipsis-v" class="page-icon float-r" svg-src="#{BASE}/img/ellipsis-v.svg"></ct-svg></button> </a>
+        <sitemap-ul-edit :node="item.child" :nownumber="index+1" :oldnumber="newNumber" @call-receive-api="receive"></sitemap-ul-edit>
+    </li>
+</draggable>

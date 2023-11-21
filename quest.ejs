@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="<%= $site.lang %>">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%=$site.title%> - <%=_.get($module , 'setting.name' , '')%></title>
+    <% for ( var i = 0 ; i < $theme.length ; i++ ) {%>
+      <link rel="stylesheet" href="<%=$theme[i]%>">
+    <% } %>
+    <meta name="keyword" content="<%= $doc.keyword.join() %>">
+    <link rel="shortcut icon" type="image/png" href="<%= _.get($site, 'logo.favicon') || '/favicon/default.png' %>"/>
+    <% if($site.seo) for(var i=0; i< $site.seo.length; i++) { %>
+      <meta name="<%=$site.seo[i].name%>" content="<%=$site.seo[i].content%>">
+    <% } %>
+    <% if( process.env.NODE_ENV == 'development' ) {%>
+      <script src="/src/plugins/vue/vue.js" type="text/javascript" charset="utf-8"></script>
+    <% }else{ %>
+      <script src="/src/plugins/vue/vue.min.js" type="text/javascript" charset="utf-8"></script>
+    <% } %>
+    <script src="/src/plugins/es6-polyfill/es6-symbol.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/src/plugins/es6-polyfill/es2015-array.prototype.find.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/src/plugins/es6-polyfill/es6-object.assign.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/src/plugins/es6-polyfill/es6-promise.auto.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/src/plugins/es6-polyfill/es6-map.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/src/plugins/vue/vue-chartjs.min.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" src="/src/plugins/vue/vue-i18n.js" charset="utf-8"></script>
+    <style>
+      /*html overflow*/
+      .htmldisplay{
+        overflow-x: auto;
+      }
+      /*img*/
+      .htmlimg{
+        width: auto;
+        height: auto;
+        max-width: 100%;
+      }
+      .verticalfont.widthfont img,
+      .htmldisplay img{
+        width: auto;
+        height: auto;
+        max-width: 100%;
+      }
+      .verticalfont.widthfont table,
+      .htmldisplay table{
+        width: auto;
+        height: auto;
+        max-width: 100%;
+      }
+    </style>
+  </head>
+  <body class="theme-bg ct-row">
+    <div class="top-space gd-xs12" id="ct-content">
+      <!--header start-->
+      <header>
+        <a href="/nss/s/<%= _.get($site, 'upath', 'main')%>/index" title="<%= _.get($site, 'title') || 'index'%>"><%= _.get($site, 'title') || 'index'%></a>
+      </header>
+      <!--header end-->
+      <!--theme start-->
+      <div class="theme gd-xs12"> 
+        <a href="/nss/s/<%= _.get($site, 'upath', 'main')%>/index" title="<%= _.get($site, 'title') || 'index'%>">
+          <div class="logo">
+            <% if(_.get($site , 'logo.display') == "show"){ %>
+            <img src="<%- _.get($site , 'logo.img') %>" alt="<%- _.get($site , 'logo.name' , 'logo') %>">
+            <% }else{ %>
+            <p> <%= _.get($site , 'logo.name' , 'title') %> </p>
+            <% } %>
+          </div>
+        </a>
+      </div>
+      <!--theme end-->
+      <!--navbar start-->
+      <div class="gd-xs12 ct-row">
+        <nav class="navbar">
+          <ul>
+            <% for(var i=0 ; i < $nav.length ; i++){ $target = $nav[i]; %>
+				<% if($target.hide !==  true){%>
+				<li>
+				  <% if($target.pageTypeNo==0) { %>
+					<a href="/nss/s/<%= _.get($site, 'upath', 'main')%>/<%= $nav[i].name %>" target="_blank"><%= $nav[i].heading %></a>
+				  <% }else if($target.pageTypeNo==1){ %>
+					<a href="<%= $nav[i].name %>" target="_blank"><%= $nav[i].heading %></a>
+				  <% }else{ %>
+					<a href="<%= $nav[i].child.length? ("/nss/s/" + _.get($site, 'upath', 'main') + '/' + $nav[i].child[0].name) : "javascript:void(0)" %>" target="_blank"><%= $nav[i].heading %></a>
+				  <% } %>
+				  <ul class="menuhidden">
+					<% for(var j=0 ; j < $target.child.length ; j++){ $target2 = $nav[i].child[j]; %>
+					  <% if($target2.pageTypeNo==0) { %>
+						<li><a href="/nss/s/<%= _.get($site, 'upath', 'main')%>/<%= $target2.name %>" target="_blank"><%= $target2.heading %></a></li>
+					  <% }else { %>
+						<li><a href="<%= $target2.name %>" target="_blank"><%= $target2.heading %></a></li>
+					  <% } %>
+					<% } %>
+				  </ul>
+				</li>
+				<% } %>
+            <% } %>
+          </ul>
+        </nav>
+      </div>
+      <!--navbar end-->
+      <!--main start-->
+      <!--main_top-->
+      <div id="main_top">
+        <div class="ct-row">
+        </div>
+      </div>
+      <!--main_top end-->
+      <!--main_middle-->
+      <div id="main_middle" style="min-height: 500px;">
+        <div class="gd-sm8 gd-xs8 gd-offset-xs2 edit-focus">
+          <div class="ct-row module">
+            <div class="module-title module-title-bg"><%=_.get($module , 'setting.name' , '')%></div>
+            <div class="module-content" style="background: white">
+              <quest></quest>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--main_middle end--> 
+      <!--footer start-->
+      <% if($site.footer){ %>
+      <footer class="footerbg gd-xs12">
+        <div class="connect ct-row">
+          <div class="gd-md9 gd-sm8">
+            <div class="text">
+              <li ><%=_.get($site , 'footer.name' , '')%></li>
+              <li class="line-block p-r-xs"><%=_.get($site , 'footer.addr1' , '')%></li>
+              <li class="line-block" ><%=_.get($site , 'footer.addr2' ,'')%></li>
+              <li >
+                <div class="line-block p-r title">{{ $t('QST006') }}</div>
+                <div class="line-block p-r-xs" ><%=_.get($site , 'footer.tel1' , '') %></div>|
+                <div class="line-block p-l-xs" ><%=_.get($site , 'footer.tel2' , '') %></div>
+              </li>
+              <li >
+                <div class="line-block p-r title">{{ $t('QST007') }}</div>
+                <div class="line-block p-r-sm"><%=_.get($site , 'footer.fax' , '')%></div>
+              </li>
+              <li >
+                <div class="line-block p-r title">{{ $t('QST008') }}</div>
+                <div class="line-block"><%= _.get($site , 'footer.email' ,'') %></div>
+              </li>
+            </div>
+          </div>
+          <div class="gd-md3 gd-sm4 text">
+            <li>
+              <div  class="freego">
+                <%- $site.footer.freegotag %>
+              </div>
+            </li>
+            <li>
+              <div class="line-block p-r-xs">{{ $t('QST009') }}</div>
+              <div class="line-block"><%= moment($site.utime).format('YYYY-MM-DD') %></div>
+            </li>
+            <li>
+              <div class="line-block p-r-xs">{{ $t('QST010') }}</div>
+              <div class="line-block"><%=_.get($site, 'visit' ,'')%></div>
+            </li>
+            <!--li>
+              <div class="line-block  p-r-xs">{{ $t('QST011') }}</div>
+              <div class="line-block"><%= visit %></div>
+            </li-->
+          </div>
+        </div>
+        <div class="copyright"><%=_.get($site,'footer.copyright' , '')%></div>
+      </footer>
+      <% } %>
+      <!--footer end-->
+    </div>
+    <script src="/src/plugins/vue/vue-uniq-ids.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/src/plugins/vue/vue.axios.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/src/plugins/vue/vue-color.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/src/plugins/vue/vue-cropper.js" type="text/javascript" charset="utf-8"></script>
+    
+    <script src="/nss/preload"></script>
+    <script>
+      var siteSet = <%- JSON.stringify( $site ) %>;
+      var user = <%- $user ? JSON.stringify( $user ) : false %>;
+      var allPage = <%- JSON.stringify( $nav ) %>;
+      var todayVisitCount =  <%= visit %>;
+      var moduleData = <%- JSON.stringify( moduleData ) %>;
+      var params = <%- JSON.stringify( $params ) %>;
+    </script>
+    <script type="text/javascript">
+      var jsonErrorHandler = function (promise, j) {
+        var jump = typeof j == "undefined" ? true : j;
+        return promise.then(function (xhr) {
+          if (xhr.status != 200) throw new Error('connection-error');
+          var json = xhr.data;
+          if (!jump) return json;
+          if (json.error !== 0) throw new Error(json.msg);
+          return json.data;
+        })['catch'](function (err) {
+          console.log(err);
+          throw err;
+        });
+      };
+      var user = window.user,
+        installed = window.installed,
+        allPage = window.allPage,
+        todayVisitCount = window.todayVisitCount,
+        currentSite = window.siteSet,
+        currentPage = window.pageSet,
+        DMap = window.deployMap,
+        themeData = window.themeData,
+        moduleData = window.moduleData;
+      var dataMix = {
+        data: function () {
+          return {
+            ct$base: '/pkg_nss',
+            ct$user: user,
+            ct$installed: installed,
+            ct$allPage: allPage,
+            ct$todayVisitCount: todayVisitCount,
+            ct$currentSite: currentSite,
+            ct$currentPage: currentPage,
+            ct$DMap: DMap,
+            ct$__seekedUser: [],
+            viewmode: 0,
+            usemode: user._id? 1 : 0,
+            mid: params.mid,
+            sid: params.sid,
+            id: params.did,
+            locked: true
+          };
+        }
+      };
+      var apiRouter = {
+        time: function () {
+          return '/time';
+        },
+        user: function () {
+          return '/nss/site/' + currentSite.upath + '/getsiteuser';
+        },
+        single: function (m, s) {
+          return ['/nss', 'storage', m, s, 'single'].join('/');
+        },
+        multi: function (m, s, id) {
+          var tmp = ['/nss', 'storage', m, s, 'multi'].join('/');
+          if (id) tmp += ('/' + id);
+          return tmp;
+        },
+        find: function(m ,s){ return ['/nss', 'storage', m, s, 'find'].join('/'); },
+        upload: function(){ return '/nss/ext/upfile'; },
+        upB64: function(){ return '/nss/ext/b64Img'; },
+        cross: function(){ return '/nss/ext/xRequest'; },
+        freeze: function(m ,s, id){ return [host, 'nss', currentSite.upath, 'freeze', m, s, id].join('/'); },
+        feeder: function(m, s){ return [host, 'nss', currentSite.upath, 'feeder', m, s].join('/'); },
+        epaper: function(m, s, id){ return [host, 'nss', currentSite.upath, 'epaper', m, s, id].join('/'); },
+        mailer: function(m){ return '/nss/ext/mailer?from=' + m; },
+        zip: function(){ return '/nss/ext/zipfs'; },
+        fulltext: function(){ return '/nss/ext/fulltext'; },
+        sitelist: function(s, c){ return ['/nss/list', s, c].join('/'); },
+        jcounter: function(){return '/nss/ext/jcounter';}
+      };
+    var randomStr = function (n) {
+        var len = parseInt(n) ? parseInt(n) : 7;
+        var text = "";
+        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        for (var i = 0; i < len; i++) text += possible.charAt(Math.floor(Math.random() * possible.length));
+        return text + Date.now().toString().slice(-4);
+      }
+      var apiMix = {
+        data: function () {
+          return {
+            api$single: {},
+            api$multiOne: {},
+            api$multiResult: []
+          }
+        },
+        methods: {
+          api$time: function () {
+            var p = axios.get(apiRouter.time());
+            return jsonErrorHandler(p, false);
+          },
+          api$decodeToken: function (token) {
+            var array = atob(token).split('#');
+            var mid = array[0];
+            var sid = array[1];
+            var s = array[2];
+            var p = array[3];
+            var m = array[4];
+            var $api = new api(mid, sid, this.ct$user, installed.groups);
+            return {
+              api: $api,
+              sname: decodeURI(s),
+              pname: decodeURI(p),
+              mname: decodeURI(m)
+            };
+          },
+          api$user: function () {
+            return Promise.resolve(user);
+          },
+          api$fetchUser: function (s) {
+            var p = axios.post(apiRouter.user(), {
+              param: s
+            });
+            return jsonErrorHandler(p);
+          },
+          api$group: function (id) {
+            var result = id ? installed.groups.filter(function (item) {
+              return item.members.indexOf(id) != -1;
+            }) : installed.groups;
+            return Promise.resolve(result);
+          },
+          api$getModuleSetting: function () {
+            var self = this;
+            var data = DMap.find(function (item) {
+              return item.mid == self.mid && item.sid == self.sid;
+            });
+            if (!data) return false;
+            return data.setting;
+          },
+          api$setStorage: function (d, v, s) {
+            var self = this;
+            var uri = apiRouter.single(this.mid, this.sid);
+            var p = axios.post(uri, {
+              data: d,
+              vector: (v ? v : 'private'),
+              static: Boolean(s)
+            });
+            return jsonErrorHandler(p).then(function (result) {
+              return self.api$single = result;
+            });
+          },
+          api$getStorage: function (v, s) {
+            var self = this;
+            var uri = apiRouter.single(this.mid, this.sid) + '?' + this.api$serialize({
+              vector: (v ? v : 'private'),
+              static: Boolean(s)
+            });
+            var p = axios.get(uri);
+            return jsonErrorHandler(p).then(function (result) {
+              return self.api$single = result;
+            });
+          },
+          api$findOneFromStorage: function (id, v, s) {
+            var self = this;
+            var uri = apiRouter.multi(this.mid, this.sid, id) + '?' + this.api$serialize({
+              vector: (v ? v : 'private'),
+              static: Boolean(s)
+            });
+            var p = axios.get(uri);
+            return jsonErrorHandler(p).then(function (result) {
+              return self.api$multiOne = result;
+            });
+          },
+          api$setOneIntoStorage: function (data, option, id, v, s) {
+            var self = this;
+            var uri = apiRouter.multi(this.mid, this.sid, id);
+            var p = axios.post(uri, {
+              data: data,
+              option: option,
+              vector: (v ? v : 'private'),
+              static: Boolean(s)
+            });
+            return jsonErrorHandler(p).then(function (result) {
+              return self.api$multiOne = result;
+            });
+          },
+          api$findStorage: function (opt, v, s) {
+            var self = this;
+            var uri = apiRouter.find(this.mid, this.sid);
+            var p = axios.post(uri, {
+              option: opt,
+              vector: (v ? v : 'private'),
+              static: Boolean(s)
+            });
+            return jsonErrorHandler(p).then(function (result) {
+              return self.api$multiResult = result;
+            });
+          },
+          api$uploadFile: function (file) {
+            var ValidImageTypes = ["image/gif", "image/jpeg", "image/png"];
+            var p = new Promise(function (resolve, reject) {
+              if (ValidImageTypes.indexOf(file['type']) != -1) {
+                /** is image, we compress by ImageCompressor */
+                compressImg(file).then(function (formData) {
+                  resolve(formData);
+                })
+              } else {
+                var formData = new FormData();
+                formData.append('file', file);
+                resolve(formData);
+              }
+            });
+            return p.then(function (formData) {
+              return jsonErrorHandler(axios.post(apiRouter.upload(), formData));
+            });
+          },
+          api$uploadB64: function (b64) {
+            var p = axios.post(apiRouter.upB64(), {
+              data: b64
+            });
+            return jsonErrorHandler(p);
+          },
+          api$xRequest: function (path) {
+            var p = axios.post(apiRouter.cross(), {
+              url: path
+            });
+            return jsonErrorHandler(p, false);
+          },
+          api$freeze: function (id, v, s) {
+            return apiRouter.freeze(this.mid, this.sid, id) + '?' + this.api$serialize({
+              vector: (v ? v : 'private'),
+              static: Boolean(s)
+            });
+          },
+          api$epaper: function (id, v, s) {
+            return apiRouter.epaper(this.mid, this.sid, id) + '?' + this.api$serialize({
+              vector: (v ? v : 'private'),
+              static: Boolean(s)
+            });
+          },
+          api$feeder: function (options, v, s) {
+            var opt = {
+              vector: (v ? v : 'private'),
+              static: Boolean(s)
+            };
+            if (options) opt = Object.assign({}, options, opt);
+            return apiRouter.feeder(this.mid, this.sid) + '?' + this.api$serialize(opt);
+          },
+          api$mailer: function (data) {
+            var p = axios.post(apiRouter.mailer(this.mid), data);
+            return jsonErrorHandler(p);
+          },
+          api$zipFiles: function (data) {
+            var p = axios.post(apiRouter.zip(), data);
+            return jsonErrorHandler(p);
+          },
+          api$fulltext: function (data) {
+            var p = axios.post(apiRouter.fulltext(), data);
+            return jsonErrorHandler(p);
+          },
+          api$siteList: function () {
+            var upath = this.ct$currentSite.upath;
+            var param = this.ct$currentSite.category == 'main' ? 'sub' : 'main';
+            var p = axios.get(apiRouter.sitelist(upath, param));
+            return jsonErrorHandler(p);
+          },
+          api$random: randomStr,
+          api$serialize: function (obj) {
+            var ary = [];
+            for (var p in obj)
+              if (obj.hasOwnProperty(p)) ary.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+            return ary.join("&");
+          },
+          api$md5: function (code) {
+            var hash = md5(code);
+            return hash;
+          },
+          api$jcounter: function(){
+            var p = axios.post(apiRouter.jcounter());
+            return jsonErrorHandler(p);
+          },
+          api$xlsx: function(header, data, name){
+            var array = [].concat([header], data);
+            var wb = XLSX.utils.book_new();
+            var ws = XLSX.utils.aoa_to_sheet(array);
+            XLSX.utils.book_append_sheet(wb, ws, 'result');
+            XLSX.writeFile(wb, (name || Date.now())+ '.xlsx');
+          },
+          api$quest: function(id) {
+            return ['', 'nss', currentSite.upath, 'quest', this.mid, this.sid, id].join('/');
+          }
+        }
+      }
+      function moduleParser (m) {
+        var box = { name: m.name };
+        Function('module', m.cts)(box);
+        var me = box.exports;
+        if(m.scss) {
+          var style = document.createElement('style');
+          style.textContent = m.scss;
+        }
+        if(m.i18n) me.i18n = m.i18n;
+        if(m.tpl) me.template = m.tpl;
+        me.mixins = [dataMix, apiMix];
+        return box;
+      }
+      var main = moduleParser(moduleData.main).exports;
+      var i18n = new VueI18n({
+        locale: '<%= $site.lang %>',
+        messages: {
+          'en': {
+            QST006: 'Tel',
+            QST007: 'Fax',
+            QST008: 'E-Mail',
+            QST009: 'Updated',
+            QST010: 'Total views',
+            QST011: 'Today visitor',
+            QST012: 'attachment',
+            QST013: 'links'
+          },
+          'zh-tw': {
+            QST006: '聯絡電話',
+            QST007: '傳真',
+            QST008: '電子信箱',
+            QST009: '最後更新',
+            QST010: '總瀏覽人次',
+            QST011: '今日瀏覽人次',
+            QST012: '相關附件',
+            QST013: '相關連結'
+          },
+          'zh-cn': {
+            QST006: '联络电话',
+            QST007: '传真',
+            QST008: '电子信箱',
+            QST009: '最后更新',
+            QST010: '总浏览人次',
+            QST011: '今日浏览人次',
+            QST012: '相关附件',
+            QST013: '相关连结'
+          },
+        }
+      });
+      if(moduleData.components){
+        main.components = {};
+        moduleData.components.forEach(function(o){
+          var m = moduleParser(o);
+          main.components[m.name] = m.exports;
+        });
+      }
+      Vue.mixin(dataMix);
+      new Vue({
+        i18n: i18n,
+        components: {
+          Quest: main
+        }
+      }).$mount('#ct-content');
+    </script>
+  </body>
+</html>

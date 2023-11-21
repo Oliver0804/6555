@@ -1,0 +1,6 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="#center" accesskey="C" id="center" :title="$t('mainPart.center')">:::</a></li>
+        <li class="breadcrumb-item" v-for="(item , index) in breadcrumb" :class="{active: breadcrumb.length == index+1 }"><a :href="item.name" v-if="breadcrumb.length !== index+1">{{item.heading}}</a><span v-if="breadcrumb.length === index+1">{{item.heading}}</span></li>
+    </ol>
+</nav>

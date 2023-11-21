@@ -1,0 +1,10 @@
+<ul>
+    <li v-for="item in sitetree">
+    	<input type="checkbox" :id="item._id" checked="checked">
+        <div>
+            <label v-if="item.child.length" :for="item._id">{{item.heading}}<button @click="goToPermissionDetail(item)" class="tree-icon ct-btn btn-min-xs btn-primary ct-ripple"><ct-svg key="search" alt="search" class="svg-white line-block" svg-src="#{BASE}/img/search.svg"></ct-svg>{{$t('mainPart.view')}}</button></label>
+            <a v-else href="#" @click.prevent>{{item.heading}}<button @click="goToPermissionDetail(item)" class="tree-icon ct-btn btn-min-xs btn-primary ct-ripple"><ct-svg key="search" alt="search" class="svg-white line-block" svg-src="#{BASE}/img/search.svg"></ct-svg>{{$t('mainPart.view')}}</button></a>
+        </div>
+        <show-permission-all-list :sitetree="item.child" @direct-top-permission="receive"></show-permission-all-list>
+    </li>
+</ul>

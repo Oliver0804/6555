@@ -1,0 +1,164 @@
+@charset "utf-8";
+/**************************************************
+= theme
+********************/
+body { margin: 0; padding: 0;}
+
+/**************************************************
+= header 上方登入選單
+********************/
+header{ position: absolute !important; top: 0px; right: 0px; z-index: 1; vertical-align: middle; text-align: right; font-size: .8rem;}
+header>a,header>div { display: inline-block; padding: 5px 12px; cursor: pointer; color:#4670bb; -moz-transition:all 200ms ease-in; -webkit-transition:all 200ms ease-in; -o-transition:all 200ms ease-in; transition:all 200ms ease-in;line-height: 1.3em; vertical-align: -webkit-baseline-middle;}
+header a:hover,header>div:hover{ background-color:#e1e8f3;}
+header .dropbtn { background-color: rgba(0,0,0,0); color: inherit; border: none; cursor: pointer;}
+header button{ padding: 0; font-family: inherit;}
+header .dropdown { position: relative; display: inline-block;}
+header .dropdown i{ padding:0 0 0 7px;}
+header .dropdown svg { width: 1.2em; height: 1.2em; vertical-align: middle; margin-left: 5px; fill:#4670bb;}
+header .dropdown-content { display: none; position: absolute; margin-left: -12px; min-width: 90px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); z-index: 1;margin-top: 5px;}
+header .dropdown-content a { color: inherit; text-align:center; padding: 5px; text-decoration: none; display: block;}
+header .dropdown-content a:hover {background-color: rgb(198, 213, 236);}
+header .dropdown:hover .dropdown-content { display: block;}
+header .dropdown.active .dropdown-content { display: block!important;}
+
+header .fontsize{ display: inline-block; cursor: default;}
+header .fontsize button{ margin:0 3px; width:24px; height:23px; letter-spacing: 0em; border-radius: 20px; font-weight: 600; background-color: inherit; color: #4670bb;border:none; cursor: pointer;line-height: 1.2em;}
+@media (max-width :767px){
+header {position: relative !important;  background: #162b3f; top:0; right: 0; margin: 0; border-radius: 0;}
+header .fontsize{display:none;}
+header>a{ padding:10px 10px;}
+}
+
+/**************************************************
+= theme 上方主圖
+********************/
+.theme{ height:140px;width: 100%;background: #ffffff;background-image: url(../img/HeaderBG-Weigo.jpg);background-repeat: no-repeat;background-position: right; background-size:cover;}
+.logo { height: 140px; font-size: 2rem; color: inherit;  padding-left: 30px;display: -webkit-box !important; display: -ms-flexbox !important; display: flex !important;  -webkit-box-align: center !important; -ms-flex-align: center !important; align-items: center !important;}
+.logo img{ max-width: 385px;max-height: 65px;}
+
+/*
+@media (max-width:1199px){
+.theme{ background-position: -300px 0px;}
+}
+*/
+@media (max-width:992px){
+/*.theme { background-position: -420px 0px;}*/
+.theme{ height:140px;width: 100%;background: #ffffff;background-image: url(../img/HeaderBG-Weigo-992.jpg);background-repeat: no-repeat; background-position: left;position: fixed;top: 0;z-index: 100; }
+.logo img{  max-width: 280px; max-height: 60px;}
+}
+
+@media (max-width:767px){
+.logo img{ max-width: 300px;max-height: 65px;}
+}
+
+@media (max-width:520px){
+.theme{ height:150px;width: 100%;background: #ffffff;background-image: url(../img/HeaderBG-Weigo-520.jpg); background-position: right; position: fixed;top: 0;z-index: 100;}
+.logo{ padding: 20px; display: block !important; text-align: left;}
+.logo img{ max-width: 100%; max-height:52px;}
+}
+
+/**************************************************
+= navbar 橫式選單
+********************/
+/*.navbar li a { height: 45px; }*/
+.navbar ul{ max-width: 1600px; justify-content: space-between;}
+.navbar li ul li a{ line-height: 2.2em; display:block;}
+.navbar ul li ul{ display: block; visibility:hidden; opacity:0; width: 0; text-align: center; background: #3078c8; }
+.navbar ul li:hover ul, 
+.navbar ul li a.active+.navrwd+.menuhidden, 
+.navbar ul li a.active:hover+.navrwd+.menuhidden, 
+.navbar ul li.navbar-item.active a:focus+.navrwd+.menuhidden, 
+.navbar ul li.navbar-item.active a:active+.navrwd+.menuhidden{ display: table; max-width:200px; visibility: visible; opacity:1; }
+.navbar ul li ul.noItem,
+.navbar ul li a.active+.navrwd+.menuhidden.noItem,
+.navbar ul li a.active:hover+.navrwd+.menuhidden.noItem,
+.navbar ul li.navbar-item.active a:focus+.navrwd+.menuhidden.noItem,
+.navbar ul li.navbar-item.active a:active+.navrwd+.menuhidden.noItem{ background: transparent; display: none;}
+.navbar ul li a:hover+.navrwd+.menuhidden, .navbar .menuhidden:hover{ display: table;}
+.navbar .menu-web{ display: block;}
+.navbar .menu-web a:last-child{ border-bottom: none;}
+.navbar .menu-mobile{ display: none;}
+.navbar ul li ul.menuhidden.overflowRight { right: 0;}
+
+@media screen and (max-width: 767px) {
+.navbar ul li ul{ display: none; visibility: visible; opacity:1;}
+.navbar ul li:hover ul{ height: auto; visibility: visible; opacity:1; padding: 0px;}
+.navbar ul li:hover ul, 
+.navbar ul li a.active+.navrwd+.menuhidden, 
+.navbar ul li a.active:hover+.navrwd+.menuhidden, 
+.navbar ul li.navbar-item.active a:focus+.navrwd+.menuhidden, 
+.navbar ul li.navbar-item.active a:active+.navrwd+.menuhidden{ display: inline;}
+.navbar .menu-web{ display: none;}
+.navbar .menu-mobile{ display: block;}
+}
+
+/**************************************************
+= tab頁簽
+********************/
+.nav-link { padding: 0.5rem 1.2rem; }
+.nav-tabs{ margin-bottom: 5px;}
+.nav-tabs li.nav-item,.nav-pills li.nav-item{ position: relative; padding-right: 6px;}
+.nav-tabs .nav-link { border-radius: 0.15rem;}
+
+/**************************************************
+= footer 最下方聯絡資訊
+********************/
+.footerbg{ height: 365px; margin-top:30px;}
+.connect{ list-style: none; position: relative; margin:40px auto 0px; max-width: 1560px;}
+.footerbg .freego {padding: 5px 0;}
+.footerbg .text { padding-left: 20px;font-size: 0.9rem;line-height: 1.6em; letter-spacing: 0.05em; font-weight: 600;}
+.footerbg a {color: #ffffff;}
+.footerbg .text .title{min-width: 60px;}
+.connect-links{text-decoration: underline}
+.connect-links,.connect .text.connect-explorer{color:#cfcfcf;}
+.connect-links:hover{text-decoration: none;color:#fffbfb;}
+.copyright {padding: 5px 5px 5px 0;  width: 100%; text-align: right;font-size: 0.8rem; position: absolute; bottom: 0;}
+.footerbg .text li { padding-bottom: 5px;}
+
+@media(max-width:1650px){
+.connect { padding: 0 40px;}
+}
+@media (max-width :1400px){
+.footerbg{ height:430px}
+.connect{ margin:60px auto 0px;}
+}
+
+@media (max-width :767px){
+.footerbg {height: 550px;}
+.connect { margin: 40px auto 0px;}
+}
+
+@media (max-width :520px){
+.connect{ margin: 0 auto;  width: 100%; padding: 40px 20px;}
+.text.connect-explorer{ display:none;}
+}
+
+/**************************************************
+= module title 模組標題
+********************/
+.module-title {  position: relative;font-weight: 600; font-size: 1.2rem; text-align: center; line-height: 1rem !important; display: table; margin: 30px auto 15px; background: none;}
+
+/* nav-Vertical 直式選單 ********************/
+.nav-Vertical ul { list-style: none; margin: 0; padding: 0;}
+.nav-Vertical ul li .sub-menu-item{ display: block; background: #eaf0fa; padding: 10px 15px;color: #4670bb; text-decoration: none; border-bottom: 1px solid #b2c3e1; -webkit-transition: 0.2s linear; -moz-transition: 0.2s linear; -ms-transition: 0.2s linear; -o-transition: 0.2s linear; transition: 0.2s linear; cursor: pointer;}
+.nav-Vertical ul li .sub-menu-item:hover { background:#4670bb;color:#ffffff; }
+.nav-Vertical ul li .sub-menu-item a{color: #0d6566;}
+.nav-Vertical ul li .sub-menu-item a:hover,.nav-Vertical ul li .sub-menu-item a:focus,.nav-Vertical ul li .sub-menu-item a:active,.nav-Vertical ul li .sub-menu-item .active,.nav-Vertical ul li .sub-menu-item:hover a{color:#ffffff;}
+.nav-Vertical ul li .menu-arrow svg{width: 16px;}
+.nav-Vertical ul li ul li .sub-menu-item{ background:#d7e0ef; border-left: 4px solid transparent; padding: 10px 15px 10px 20px;}
+.nav-Vertical ul li ul li ul li .sub-menu-item{ background:#eefefd; border-left: 4px solid transparent; padding: 10px 20px 10px 30px;}
+.nav-Vertical ul li ul li .sub-menu-item:hover,
+.nav-Vertical ul li ul li ul li .sub-menu-item:hover {background: #6b8fcb; color: #ffffff;border-left: 4px solid #4670bb;}
+
+/* sitemap 導覽頁 ********************/
+.ct-sitemap li{list-style: none;}
+.sitemap-top { line-height: 1.8em;}
+.sitemap-title {  padding-left: 15px;padding-right: 15px;font-weight: bold;}
+.sitemap-title span{line-height: 25px; padding:0 8px 0 0;}
+.sitemap-block { box-shadow: 3px 4px 0px rgb(202, 207, 216); background: #ffffff; letter-spacing: 0.06em;}
+.sitemap-item a { display: inline-block; width: 100%; border-left: 2px solid #b2c3e1; padding: 6px;  transition: all 0.3s ease-in-out; -moz-transition: all 0.3s ease-in-out;-webkit-transition: all 0.3s ease-in-out;}
+.sitemap-item a:hover,.sitemap-item a:focus{background:#f3f6fb;}
+.sitemap-item ul ul{padding-left: 25px;}
+.sitemap-item ul li { padding: 7px 0 0;}
+.sitemap-item ul li span{padding: 0 10px 0 5px;}
+.sitemap-icon svg { padding-top: 5px; width: 18px; height: 20px; fill: #ffffff;}

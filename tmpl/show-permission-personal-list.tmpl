@@ -1,0 +1,15 @@
+ <ul>
+    <li v-for="page in sdmap">
+		<input @invalid.prevent required="required" :id="'sp'+page._id" checked="checked" type="checkbox">
+		<label :for="'sp'+page._id">{{page.heading}}
+		{{page.child.length}}
+			<div v-for="module in page.mods">
+				<span class="tree-arr"></span>
+				<span class="tree-gadget">{{module.name}}</span>
+				<span class="tree-icon icon-bg1" v-if="module.manage"><ct-svg class="svg-white line-block" svg-src="#{BASE}/img/circle.svg" key="circle" alt="circle"></ct-svg>{{$t('global.use')}}</span>
+				<span class="tree-icon icon-bg2" v-if="module.use"><ct-svg class="svg-white line-block" svg-src="#{BASE}/img/circle.svg" key="circle" alt="circle"></ct-svg>{{$t('global.use')}}</span>
+			</div>
+		</label>
+		<show-permission-personal-list :sdmap='page.child'></show-permission-personal-list>
+    </li>
+</ul>

@@ -1,0 +1,6 @@
+<ul class="list-unstyled">
+    <li v-for="(item , index) in node">
+        <a :href="item.name"><span>{{ newNumber.split('-').splice(1).join('-') }}-{{index+1}}</span>{{item.heading}}</a>
+        <sitemap-ul :node="item.child" :nownumber="index+1" :oldnumber="newNumber"></sitemap-ul>
+    </li>
+</ul>

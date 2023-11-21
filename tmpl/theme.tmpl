@@ -1,0 +1,1834 @@
+<div @click="cleanAll">
+  <vs-notify group="alert"></vs-notify>
+  <vs-notify group="confirm" position="top right"></vs-notify>
+   <a class="focusable" tabindex="1" :title="$t('alert.showFreego')" ref="jumpToCenter" href="#center" >{{$t('alert.showFreego')}}</a>
+  <!-- top bar start -->
+  <div id="masterbar" class="ct-row" v-if="ct$isLogin">
+    <div class="gd-xs2">
+      <div class="ct-logo">
+        <a href="index" @click.prevent="setVal('focusedPage','gadget')">
+          <img src="#{BASE}/img/sslogo.png">
+        </a>
+      </div>
+      <div class="side-opener float-l border-r border-primary" @click.prevent="setVal('leftBar',!viewMode)" v-if="ct$isLogin">
+        <template v-if="viewMode">
+          <ct-svg key="preview" class="side-opener-view" title="預覽" svg-src="#{BASE}/img/side-open.svg"></ct-svg>
+        </template>
+        <template v-else>
+          <ct-svg key="edit" class="side-opener-edit" title="編輯" svg-src="#{BASE}/img/side-edit.svg"></ct-svg>
+        </template>
+      </div>
+    </div>
+    <div class="gd-xs6" v-if="!ct$isLogin">{{$t('alert.width')}}</div>
+    <!-- style and layouts -->
+    <div class="toggle" v-if="ct$isLogin">
+      <ul>
+        <li :class="{'active' : eqVal('focusedPage','gadget')}" v-if="ct$isSiteAdmin || ct$isPageAdmin">
+          <a href="#" @click.prevent="setVal('focusedPage','gadget')" v-t="'topBar.gadget'"></a>
+        </li>
+        <li :class="{'active' : eqVal('focusedPage','page')}" v-if="ct$isSiteAdmin">
+          <a href="#" @click.prevent="setVal('focusedPage','page')" v-t="'topBar.page'"></a>
+        </li>
+        <li :class="{'active' : eqVal('focusedPage','layouts')}" v-if="ct$isSiteAdmin">
+          <a href="#" @click.prevent="setVal('focusedPage','layouts')" v-t="'topBar.layouts'"></a>
+        </li>
+        <li :class="{'active' : eqVal('focusedPage','style')}" v-if="ct$isSiteAdmin">
+          <a href="#" @click.prevent="setVal('focusedPage','style')" v-t="'topBar.style'"></a>
+        </li>
+        <li :class="{'active' : eqVal('focusedPage','settings')}" v-if="ct$isSiteAdmin">
+          <a href="#" @click.prevent="setVal('focusedPage','settings')" v-t="'topBar.settings'"></a>
+        </li>
+        <li :class="{'active' : eqVal('focusedPage','permission')}">
+          <a href="#" @click.prevent="focusePermission()" v-t="'topBar.permission'"></a>
+        </li>
+        <li :class="{'active' : eqVal('focusedPage','recycling')}" v-if="ct$isSiteAdmin">
+          <a href="#" @click.prevent="focuseRecyling()" v-t="'topBar.recycling'"></a>
+        </li>
+      </ul>
+    </div>
+    <!-- style and layouts -->
+    <div class="publish" v-if=" ['gadget' , 'recycling'].indexOf( getVal('focusedPage') ) != -1 && ct$isLogin">
+      <button class="ct-btn btn-md btn-min-md btn-confirm ct-ripple" v-if="ct$isSiteAdmin || ct$isPageAdmin" @click="publishDMap()" v-t="'topBar.publish'"></button>
+    </div>
+  </div>
+  <!-- top bar end -->
+  <!-- side bar start -->
+  <nav id="ct-side" class="bg-white navopen gd-xs2" v-if="ct$isLogin && getVal('leftBar')">
+    <div class="account w-full m-b p-l-xxs p-r-xxs bg-fresh border-b border-fresh">
+      <div class="pic m-t-sm"><img class="img-sm radius-circle" alt="photo" src="#{BASE}/img/accountpic.jpg"></div>
+      <p class="m-no p-tb-xs text-warning text-c font-bold">{{ct$user.name}} {{ $t('sideBar.hello') }}</p>
+    </div>
+    <!--gadget start-->
+    <div v-if="eqVal('focusedPage','default')"></div>
+    <div v-else-if="eqVal('focusedPage','gadget')">
+      <div v-if="ct$isSiteAdmin || ct$isPageAdmin">
+        <div class="sidetitle m-r p-xs text-primary font-bold text-l">
+          <ct-svg key="enter" alt="enter" class="sidetitle-icon" svg-src="#{BASE}/img/enter.svg"></ct-svg>{{
+          $t('sideBar.baseGadget') }}
+        </div>
+        <div class="ct-row m-l-xs m-r-xs">
+          <draggable v-model="ct$installed.ctmods" class="dragArea" :clone="ct$moduleCopy" :options="{ghostClass: 'mod-ghost', group:{ name:'gadget', pull:'clone', put:false } ,animation: 150 , sort: false, animation: 150}">
+            <div class="gd-xs6" v-for="(module, index) in ct$installed.ctmods" :key="module.top._id+index">
+              <div class="m-xs p-xxs ct-gadget border border-fresh radius-sm text-c bg-white"><img :src="module.icon"><span
+                 class="text-primary">{{module.top.name}}</span></div>
+            </div>
+          </draggable>
+        </div>
+        <div class="sidetitle m-r p-xs text-primary font-bold text-l">
+          <ct-svg key="enter" alt="enter" class="sidetitle-icon" svg-src="#{BASE}/img/enter.svg"></ct-svg>{{
+          $t('sideBar.advancedGadget') }}
+        </div>
+      </div>
+    </div>
+    <!-- all page layout start-->
+    <!--<div v-else-if="eqVal('focusedPage','page') || eqVal('focusedPage','pageAdvanced')">
+      <div class="sidetitle m-r p-xxs text-primary font-bold text-l">
+        <ct-svg key="enter" alt="enter" class="sidetitle-icon" svg-src="#{BASE}/img/enter.svg"></ct-svg>
+        {{$t('sideBar.page')}}
+      </div>
+      <div class="ct-page m-xs">
+        <ul is="side-sitemap-ul" :node="tree" first="true"></ul>
+      </div>
+    </div>-->
+    <!-- all page layout end-->
+    <div v-else-if="eqVal('focusedPage','template')">
+      <div class="sidetitle m-r p-xs text-primary font-bold text-l">
+        <ct-svg key="enter" alt="enter" class="sidetitle-icon" svg-src="#{BASE}/img/enter.svg"></ct-svg>{{$t('sideBar.baseTheme')}}
+      </div>
+      <div class="ct-row m-l-xs m-r-xs" v-for="(item ,index) in ct$commonTheme" @click="setTheme(item)">
+        <div class="gd-xs12" :class="{'active' : ct$iscurrentTheme(item)}">
+          <div class="ct-template m-xs border border-fresh radius-sm bg-fresh">
+            <div><img class="templateimg" :src="item.icon.split('.')[0]+'s.'+item.icon.split('.')[1]"></div>
+            <div class="title p-b-xxs p-r-xxs text-primary  text-r font-bold">{{item.top.name}}</div><img class="popimg" :src="item.icon">
+          </div>
+        </div>
+      </div>
+      <div class="sidetitle m-r p-xs text-primary font-bold text-l">
+        <ct-svg key="enter" alt="enter" class="sidetitle-icon" svg-src="#{BASE}/img/enter.svg"></ct-svg>{{$t('sideBar.customizationTheme')}}
+      </div>
+      <div class="ct-row m-l-xs m-r-xs" v-for="(item ,index) in ct$customTheme" @click="setTheme(item)">
+        <div class="gd-xs12" :class="{'active' : ct$iscurrentTheme(item)}">
+          <div class="ct-template m-xs border border-fresh radius-sm bg-fresh">
+            <div><img class="templateimg" :src="item.icon.split('.')[0]+'s.'+item.icon.split('.')[1]"></div>
+            <div class="title p-b-xxs p-r-xxs text-primary text-r font-bold">{{item.top.name}}</div>
+            <img class="popimg" :src="item.icon">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div v-else-if=" ['settings' , 'setSeo' , 'setFooter' , 'subSite'].indexOf( getVal('focusedPage') ) != -1 ">
+      <div class="p-lr-md p-t-sm">
+        <form @submit.prevent>
+          <div class="m-t-sm m-b-sm">
+            <button class="ct-btn btn-md ct-btn-block radius-xs btn-primary btn-line ct-ripple" :class="{'active': eqVal('focusedPage','settings')}"
+             @click="setVal('focusedPage','settings')" v-t="'sideBar.siteSetting'"></button>
+          </div>
+          <hr class="hr-blue">
+          <div class="m-t-sm m-b-sm">
+            <button class="ct-btn btn-md ct-btn-block radius-xs btn-primary btn-line ct-ripple" :class="{'active': eqVal('focusedPage','setSeo')}"
+             @click="setVal('focusedPage','setSeo')" v-t="'sideBar.setSeo'"></button>
+          </div>
+          <hr class="hr-blue">
+          <div class="m-t-sm m-b-sm">
+            <button class="ct-btn btn-md ct-btn-block radius-xs btn-primary btn-line ct-ripple" :class="{'active': eqVal('focusedPage','setFooter')}"
+             @click="setVal('focusedPage','setFooter')" v-t="'sideBar.setFooter'"></button>
+          </div>
+          <hr class="hr-blue">
+          <div class="m-t-sm m-b-sm" v-if="ct$isMainSite">
+            <button class="ct-btn btn-md ct-btn-block radius-xs btn-primary btn-line ct-ripple" :class="{'active': eqVal('focusedPage','subSite')}"
+             @click="focuseSubSite()" v-t="'sideBar.subManagement'"></button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div v-else-if=" ['permission' , 'permissionDetail'].indexOf( getVal('focusedPage') ) != -1 ">
+      <div class="sidetitle m-r p-xxs text-primary font-bold text-l" v-if="eqVal('leftBarState','user')">
+        <ct-svg key="enter" alt="enter" class="sidetitle-icon" svg-src="#{BASE}/img/enter.svg"></ct-svg>{{$t('sideBar.personalInfoManagement')}}
+      </div>
+      <div class="p-lr-md m-t-md" v-if="eqVal('leftBarState','user')">
+        <form @submit.prevent>
+          <div class="form-group-m">
+            <input type="text" id="id" :title="$t('sideBar.user')" @invalid.prevent required="required" class="has-value"
+             :placeholder="focusedPersonalInfo.username" readonly="readonly" disabled>
+            <label for="id" class="input-label">{{$t('sideBar.user')}}</label>
+            <i class="bar"></i>
+          </div>
+          <div class="form-group-m">
+            <input type="text" id="id" :title="$t('sideBar.name')" @invalid.prevent required="required" class="has-value"
+             :placeholder="focusedPersonalInfo.name" readonly="readonly" disabled>
+            <label for="id" class="input-label">{{$t('sideBar.name')}}</label>
+            <i class="bar"></i>
+          </div>
+          <div class="form-group-m">
+            <input type="text" id="Inputemil" :title="$t('global.email')" required="required" @invalid.prevent v-model="focusedPersonalInfo.email">
+            <label for="Inputemil" class="input-label">{{$t('global.email')}}</label>
+            <i class="bar"></i>
+          </div>
+          <div class="m-t-sm m-b-sm">
+            <button class="ct-btn btn-md ct-btn-block radius-xs btn-primary btn-line ct-ripple" @click="setVal('leftBarState','password');">{{$t('sideBar.reset')}}</button>
+          </div>
+          <div class="p-xs text-c">
+            <button class="m-r-xs ct-btn btn-md btn-min-xs btn-secondary ct-ripple" @click="setVal('focusedPage','gadget')">
+              <ct-svg key="times" class="line-block" svg-src="#{BASE}/img/times.svg" alt="times"></ct-svg>{{$t('global.cancel')}}
+            </button>
+            <button class="ct-btn btn-md btn-min-xs btn-confirm ct-ripple" @click="updateEmail()">
+              <ct-svg key="check" class="line-block" svg-src="#{BASE}/img/check.svg" alt="check"></ct-svg>{{$t('global.save')}}
+            </button>
+          </div>
+        </form>
+      </div>
+      <div class="sidetitle m-r p-xxs text-primary font-bold text-l" v-if="eqVal('leftBarState','password')">
+        <ct-svg key="enter" alt="enter" class="sidetitle-icon" svg-src="#{BASE}/img/enter.svg"></ct-svg>{{$t('sideBar.reset')}}
+      </div>
+      <div class="p-lr-md m-t-md" v-if="eqVal('leftBarState','password')">
+        <form @submit.prevent>
+          <div class="form-group-m">
+            <input type="text" required="required" @invalid.prevent v-model="focusedPersonalPassword.password">
+            <label for="InputPassword1" class="input-label">{{$t('sideBar.originalPwd')}}</label>
+            <i class="bar"></i>
+          </div>
+          <div class="form-group-m">
+            <input type="text" required="required" @invalid.prevent v-model="focusedPersonalPassword.NewPassword">
+            <label for="InputPassword2" class="input-label">{{$t('sideBar.setNewPwd')}}</label>
+            <i class="bar"></i>
+          </div>
+          <div class="form-group-m">
+            <input type="text" required="required" @invalid.prevent v-model="focusedPersonalPassword.CheckNewPassword">
+            <label for="InputPassword3" class="input-label">{{$t('sideBar.checkNewPwd')}}</label>
+            <i class="bar"></i>
+          </div>
+          <div class="p-xs text-c">
+            <button class="m-r-xs ct-btn btn-md btn-min-xs btn-secondary ct-ripple" @click="setVal('leftBarState','user')">
+              <ct-svg key="times" class="line-block" svg-src="#{BASE}/img/times.svg" alt="times"></ct-svg>{{$t('global.cancel')}}
+            </button>
+            <button class="ct-btn btn-md btn-min-xs btn-confirm ct-ripple" @click="updatePassword()">
+              <ct-svg key="check" class="line-block" svg-src="#{BASE}/img/check.svg" alt="check"></ct-svg>{{$t('global.save')}}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <!-- layout start -->
+    <div class="ct-row" v-else-if=" ['layouts'].indexOf( getVal('focusedPage') ) != -1 ">
+      <div class="sidetitle m-r p-xs text-primary font-bold text-l" remark="基礎版型配置">
+        <ct-svg key="enter" alt="enter" class="sidetitle-icon" svg-src="#{BASE}/img/enter.svg"></ct-svg>{{
+        $t('sideBar.basiclayout') }}
+      </div>
+      <div style="padding-left: 10px; margin-top: -10px; margin-bottom: 5px; font-size: 0.96rem;" remark="單位為百分比">{{
+        $t('sideBar.percentage') }}</div>
+      <div class="gd-sm12">
+        <div class="gd-sm6" v-for="(layout,index) in ct$layouts" @click="setLayout(layout)">
+          <div class="ct-fieldset m-xs" :class="{'active' : ct$anchors.id == layout.id }">
+            <img :src="ct$getPackagePath() + '/img/layout/layoutfield'+index+'.svg'" :alt="'欄位'+layout.layout" :title="'欄位'+layout.layout">
+          </div>
+        </div>
+      </div>
+      <div class="gd-sm12">
+        <hr class="hr-blue">
+      </div>
+      <div class="sidetitle m-r p-xs text-primary font-bold text-l">
+        <ct-svg key="enter" alt="enter" class="sidetitle-icon" svg-src="#{BASE}/img/enter.svg"></ct-svg>{{
+        $t('sideBar.advancedlayout') }}
+      </div>
+      <div class="font-bold" style="color: #545454; font-size: 0.875rem; padding: 0 25px; margin-top: -20px; margin-bottom: 10px"
+       remark="此設定將套用一欄式100%並開啟模組自身寬度設定">{{ $t('sideBar.aldescription') }}</div>
+      <div class="gd-sm12 text-c m-t">
+        <button v-if="!ct$isModuleWidth" @click="setModuleWidth" remark="啟用進階寬度設定" class="ct-btn btn-md radius-xs ct-ripple btn-primary"
+         style="font-size: 0.95rem;">
+          {{ $t('sideBar.openal') }}
+        </button>
+        <button v-if="ct$isModuleWidth" @click="setModuleWidth" remark="啟用進階寬度設定" class="ct-btn btn-md radius-xs ct-ripple btn-secondary"
+         style="font-size: 0.95rem;">
+          {{ $t('sideBar.cancelal') }}
+        </button>
+      </div>
+      <!--<div class="gd-sm12">
+        <hr class="hr-blue">
+      </div>
+      <div class="sidetitle m-r p-xs text-primary font-bold text-l">
+        <ct-svg key="enter" alt="enter" class="sidetitle-icon" svg-src="#{BASE}/img/enter.svg" remark="(全站)基礎版型配置"></ct-svg>{{ $t('sideBar.sitebasiclayout') }}
+      </div>
+      <div class="gd-sm12 text-c m-t">
+        <button @click="setVal('focusedPage' , 'allPageLayout')" class="ct-btn btn-md radius-xs btn-primary ct-ripple m-b-xs" style="font-size: 0.985rem;" remark="管理版面配置預設值">{{ $t('sideBar.managelayout') }}</button>
+        <div class="font-bold" style="color: #545454; font-size: 0.875rem;" remark="此設定將套用一欄式100%並開啟模組自身寬度設定">{{ $t('sideBar.alsitedescription') }}<br>{{ $t('sideBar.alsitedescriptions') }}</div>
+      </div>-->
+    </div>
+    <!-- layout end -->
+    <!-- recycling start -->
+    <div class="ct-row" v-else-if=" ['recycling'].indexOf( getVal('focusedPage') ) != -1 ">
+      <div class="text-c">
+        <div class="text-primary font-bold" remark="請點選下方頁面連結至該頁放置被回收的模組">{{ $t('sideBar.recycledescription') }}<br>{{
+          $t('sideBar.recycledescriptions') }}</div>
+      </div>
+      <div class="gd-sm12">
+        <div class="ct-recycling-block m-t-xs" v-for="(item,index) in recycleList" v-if="item.mods.length > 0">
+          <div class="bg-confirm cr-select" style="margin: 0 3px 0 3px; border-radius: 4px;">
+            <div class="cr-dot"></div>
+				<a :href="item.pageLink" v-if="item.currentPage" class="line-block cr-text p-t-xs p-b-xs p-l-xxs">{{item.pageName}}(當前頁面)</a>
+				<a :href="item.pageLink" v-else class="line-block cr-text p-t-xs p-b-xs p-l-xxs">{{item.pageName}}</a>
+            <!--<div class="ct-recycling-toggle line-block float-r m-r-xs" :class="{'cr-open':getVal('cr-open')}" @click="setVal('cr-open' , !getVal('cr-open'))">
+              <ct-svg class="toggle-btn" key="open" svg-src="#{BASE}/img/chevron-down.svg" remark="展開" alt="展開" title="展開"></ct-svg>
+            </div>-->
+          </div>
+          <div class="ct-row cr-background" style="padding: 5px;">
+            <!-- v-if="getVal('cr-open')" -->
+            <draggable v-model="item.mods" class="dragArea" :options="{ ghostClass: 'mod-ghost',  group:{ name:'gadget', put:false } ,animation: 150 , sort: false, handle:'.ct-recycling'}">
+              <div class="gd-sm12" v-for="module in item.mods" :key="module.sid">
+                <div class="ct-recycling pd-2 gd-sm10">
+                  <div class="ct-recycling-title text-primary font-bold" :title="$t('sideBar.recycledragback')">{{module.setting.name}}</div>
+                </div>
+				<div class="ct-recycling pd-2 gd-sm2">
+					<a class="ct-recycling-title text-primary font-bold" @click="deleteModule(module)">
+						<ct-svg key="trash-alt" class="svg-blue line-block" svg-src="#{BASE}/img/trash-alt.svg" alt="trash-alt"></ct-svg>
+					</a>
+				</div>
+              </div>
+            </draggable>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- recycling end -->
+  </nav>
+  <!-- side bar end -->
+  <!-- main start -->
+  <div id="ct-content" class="navopen" :class="[{'gd-xs12' : !getVal('leftBar') && !ct$isLogin}, {'gd-offset-xs2 gd-xs10' : getVal('leftBar') && ct$isLogin}, {'top-space' : ct$isLogin}]">
+    <!-- left-tab start-->
+    <div v-if="inEditMode" class="left-tab" @click="toggleLeftBar">
+      <svg :transform="getlr()" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 92 92">
+        <path d="M61.8,68.1c1.6,1.5,1.6,4.1,0.1,5.7C61.1,74.6,60,75,59,75c-1,0-2-0.4-2.8-1.1l-26-25C29.4,48.1,29,47.1,29,46s0.4-2.1,1.2-2.9l26-25c1.6-1.5,4.1-1.5,5.7,0.1c1.5,1.6,1.5,4.1-0.1,5.7L38.8,46L61.8,68.1z" /></svg>
+    </div>
+    <!-- left-tab end-->
+    <!-- gadget start-->
+    <!-- style and layouts -->
+    <div class="ct-row" v-if=" ['gadget' , 'layouts' , 'recycling' ,  'sitemap'].indexOf( getVal('focusedPage') ) != -1">
+      <!-- style and layouts -->
+      <!--header start-->
+      <right-header-bar :language="getVal('language')" @update:lang="setVal" @update:page="setVal"></right-header-bar>
+      <!--header end-->
+      <!--theme start-->
+      <div class="theme gd-xs12">
+        <!-- logo start -->
+        <div class="logo">
+		<h1>
+		<a href="index">
+		<img v-if="ct$currentSite.logo.img && (!ct$currentSite.logo.display || ct$currentSite.logo.display === 'show')" :src="ct$currentSite.logo.img" :alt="ct$currentSite.title+'網站LOGO'">
+		<strong> {{ct$currentSite.logo.name}} </strong>
+		 </a>
+		</h1>
+        </div>
+        <!-- logo end -->
+      </div>
+      <div class="gd-xs12 ct-row">
+        <div class="ct-row">
+          <navigation :tree="viewTree"></navigation>
+        </div>
+      </div>
+      <!--theme end-->
+      <!--main start-->
+      <!-- style and layouts -->
+      <template v-if=" ['gadget' , 'layouts' , 'recycling'].indexOf( getVal('focusedPage') ) != -1">
+        <!--main_top-->
+        <div id="main_top" class="gd-xs12 ct-row gd-lg10 gd-offset-lg1">
+          <div class="ct-row" :class="{'top_remind': inEditMode}">
+            <draggable v-model="top" class="dragArea" :class="{'mod-area': inEditMode}" :options="{ 'disabled': !inEditMode, ghostClass: 'mod-ghost', filter:'.setup', group:'gadget', animation: 150, handle:'.frameHandle'}">
+              <div v-for="(obj, index) in top" :key="obj._id + index" class="list-complete-item" :class="['gd-xs'+ ct$getModuleWdith(obj.setting.width)  , {'edit-focus' : inEditMode}]">
+                <div :class="{'module': obj.setting.frame || (inEditMode && ct$isModuleAdmin)}">
+                  <a v-if="inEditMode" class="setup" @click.prevent="focuseModule(obj)" href="#">
+                    <ct-svg key="modcog" alt="cog" class="setup-svg" svg-src="#{BASE}/img/cog.svg"></ct-svg>
+                  </a>
+                  <h2 class="module-title module-title-bg frameHandle" v-if="obj.setting.frame || (inEditMode && ct$isModuleAdmin)">{{
+                    obj.setting.name }}</h2>
+                  <keep-alive>
+					<!-- usemode && viewmode -->
+					<div :is="ct$moduleName(obj)" class="module-bg" :class="[ct$moduleName(obj), {'module-content': obj.setting.frame || (inEditMode && ct$isModuleAdmin)}]" :usemode="ct$isModuleUser(obj)"  :viewmode="(viewMode && ct$isModuleAdmin(obj))" :sid="obj.sid" :mid="obj.mid" :api="ct$getApi(obj)">
+						module not load
+					</div>
+				</keep-alive>
+                </div>
+              </div>
+            </draggable>
+          </div>
+        </div>
+        <div class="gd-xs12 gd-lg10 gd-offset-lg1 ct-row">
+          <breadcrumb :nowpage="ct$currentPage" :sitemap="ct$allPage" :pageState="getVal('focusedPage')"></breadcrumb>
+        </div>
+        <div class="center-module-bg gd-xs12 gd-lg10 gd-offset-lg1 ct-row">
+          <div id="left" anchor="left" :class="'ct-row gd-sm'+ct$anchors.left.column" v-if="ct$anchors.left.display" style="margin-top:0px">
+            <div class="ct-row" :class="{'lmr_remind': inEditMode}">
+              <draggable v-model="left" class="dragArea" :class="{'mod-area': inEditMode}" :options="{ 'disabled': !inEditMode, ghostClass: 'mod-ghost', filter:'.setup', group:'gadget', animation: 150, handle:'.frameHandle'}">
+                <div v-for="(obj, index) in left" :key="obj._id + index" class="list-complete-item" :class="['gd-xs'+ ct$getModuleWdith(obj.setting.width)  , {'edit-focus' : inEditMode}]">
+                  <div :class="{'module': obj.setting.frame || (inEditMode && ct$isModuleAdmin)}">
+                    <a v-if="inEditMode" class="setup" @click.prevent="focuseModule(obj)" href="#">
+                      <ct-svg key="modcog" alt="cog" class="setup-svg" svg-src="#{BASE}/img/cog.svg"></ct-svg>
+                    </a>
+                    <h2 class="module-title module-title-bg frameHandle" v-if="obj.setting.frame || (inEditMode && ct$isModuleAdmin)">{{
+                      obj.setting.name }}</h2>
+                    <keep-alive>
+						<!-- usemode && viewmode -->
+						<div :is="ct$moduleName(obj)" class="module-bg" :class="[ct$moduleName(obj), {'module-content': obj.setting.frame || (inEditMode && ct$isModuleAdmin)}]" :usemode="ct$isModuleUser(obj)"  :viewmode="(viewMode && ct$isModuleAdmin(obj))" :sid="obj.sid" :mid="obj.mid" :api="ct$getApi(obj)">
+							module not load
+						</div>
+					</keep-alive>
+                  </div>
+                </div>
+              </draggable>
+            </div>
+          </div>
+          <div id="middle" anchor="middle" :class="'ct-row gd-sm'+ct$anchors.middle.column" v-if="ct$anchors.middle.display">
+		
+            <div class="ct-row" :class="{'lmr_remind': inEditMode}">
+              <draggable v-model="middle" class="dragArea" :class="{'mod-area': inEditMode}" :options="{ 'disabled': !inEditMode, ghostClass: 'mod-ghost', filter:'.setup', group:'gadget', animation: 150, handle:'.frameHandle'}">
+                <div v-for="(obj, index) in middle" :key="obj._id + index" class="list-complete-item" :class="['gd-xs'+ ct$getModuleWdith(obj.setting.width)  , {'edit-focus' : inEditMode}]">
+                  <div :class="{'module': obj.setting.frame || (inEditMode && ct$isModuleAdmin)}">
+                    <a v-if="inEditMode" class="setup" @click.prevent="focuseModule(obj)" href="#">
+                      <ct-svg key="modcog" alt="cog" class="setup-svg" svg-src="#{BASE}/img/cog.svg"></ct-svg>
+                    </a>
+                    <h2 class="module-title module-title-bg frameHandle" v-if="obj.setting.frame || (inEditMode && ct$isModuleAdmin)">{{
+                      obj.setting.name }}</h2>
+                    <keep-alive>
+						<!-- usemode && viewmode -->
+						<div :is="ct$moduleName(obj)" class="module-bg" :class="[ct$moduleName(obj), {'module-content': obj.setting.frame || (inEditMode && ct$isModuleAdmin)}]" :usemode="ct$isModuleUser(obj)"  :viewmode="(viewMode && ct$isModuleAdmin(obj))" :sid="obj.sid" :mid="obj.mid" :api="ct$getApi(obj)">
+							module not load
+						</div>
+					</keep-alive>
+                  </div>
+                </div>
+              </draggable>
+            </div>
+          </div>
+          <div id="right" anchor="right" :class="'ct-row gd-sm'+ct$anchors.right.column" v-if="ct$anchors.right.display" style="margin-top:20px">
+            <div class="ct-row" :class="{'lmr_remind': inEditMode}">
+              <draggable v-model="right" class="dragArea" :class="{'mod-area': inEditMode}" :options="{ 'disabled': !inEditMode, ghostClass: 'mod-ghost', filter:'.setup', group:'gadget', animation: 150, handle:'.frameHandle'}">
+                <div v-for="(obj, index) in right" :key="obj._id + index" class="list-complete-item" :class="['gd-xs'+ ct$getModuleWdith(obj.setting.width)  , {'edit-focus' : inEditMode}]">
+                  <div :class="{'module': obj.setting.frame || (inEditMode && ct$isModuleAdmin)}">
+                    <a v-if="inEditMode" class="setup" @click.prevent="focuseModule(obj)" href="#">
+                      <ct-svg key="modcog" alt="cog" class="setup-svg" svg-src="#{BASE}/img/cog.svg"></ct-svg>
+                    </a>
+                    <h2 class="module-title module-title-bg frameHandle" v-if="obj.setting.frame || (inEditMode && ct$isModuleAdmin)">{{
+                      obj.setting.name }}</h2>
+                    <keep-alive>
+						<!-- usemode && viewmode -->
+						<div :is="ct$moduleName(obj)" class="module-bg" :class="[ct$moduleName(obj), {'module-content': obj.setting.frame || (inEditMode && ct$isModuleAdmin)}]" :usemode="ct$isModuleUser(obj)"  :viewmode="(viewMode && ct$isModuleAdmin(obj))" :sid="obj.sid" :mid="obj.mid" :api="ct$getApi(obj)">
+							module not load
+						</div>
+					</keep-alive>
+                  </div>
+                </div>
+              </draggable>
+            </div>
+          </div>
+        </div>
+        <div id="main_bottom" anchor="bottom" class="gd-xs12 gd-lg10 gd-offset-lg1 ct-row">
+          <div class="ct-row" :class="{'bottom_remind': inEditMode}">
+            <draggable v-model="bottom" class="dragArea" :class="{'mod-area': inEditMode}" :options="{ 'disabled': !inEditMode, ghostClass: 'mod-ghost', filter:'.setup', group:'gadget', animation: 150, handle:'.frameHandle'}">
+              <div v-for="(obj, index) in bottom" :key="obj._id + index" class="list-complete-item" :class="[ 'gd-xs'+ ct$getModuleWdith(obj.setting.width)  , {'edit-focus' : inEditMode}]">
+                <div :class="{'module': obj.setting.frame || (inEditMode && ct$isModuleAdmin)}">
+                  <a v-if="inEditMode" class="setup" @click.prevent="focuseModule(obj)" href="#">
+                    <ct-svg key="modcog" alt="cog" class="setup-svg" svg-src="#{BASE}/img/cog.svg"></ct-svg>
+                  </a>
+                  <h2 class="module-title module-title-bg frameHandle" v-if="obj.setting.frame || (inEditMode && ct$isModuleAdmin)">{{
+                    obj.setting.name }}</h2>
+                  <keep-alive>
+					<!-- usemode && viewmode -->
+					<div :is="ct$moduleName(obj)" class="module-bg" :class="[ct$moduleName(obj), {'module-content': obj.setting.frame || (inEditMode && ct$isModuleAdmin)}]" :usemode="ct$isModuleUser(obj)"  :viewmode="(viewMode && ct$isModuleAdmin(obj))" :sid="obj.sid" :mid="obj.mid" :api="ct$getApi(obj)">
+						module not load
+					</div>
+				</keep-alive>
+                </div>
+              </div>
+            </draggable>
+          </div>
+        </div>
+        <!--main end-->
+      </template>
+      <!-- style and layouts -->
+      <template v-if="eqVal('focusedPage','sitemap')">
+        <div id="main_middle" class="gd-xs12 ct-row ct-sitemap">
+          <div class="ct-row m-sm">
+            <h2 class="module-title module-title-bg" v-t="'sitemap.sitemap'"></h2>
+            <div class="line-block p-l-sm"><a href="#center" accesskey="C" id="center" :title="$t('sitemap.center')"
+               class="text-secondary">:::</a></div>
+            <div class="sitemap-top p-r-sm m-t-sm  line-block" v-t="'sitemap.descript'"></div>
+            <div class="sitemap-top p-lr-sm">{{$t('sitemap.descript1')}}</div>
+            <div class="p-lr-sm m-t-sm sitemap-top">
+              <ul class="list-unstyled">
+                <li v-t="'sitemap.top'">{{$t('sitemap.top')}}</li>
+                <li v-t="'sitemap.middle'">{{$t('sitemap.middle')}}</li>
+                <li v-t="'sitemap.footer'"></li>
+              </ul>
+            </div>
+            <div class="gd-md4 gd-sm12 p-sm" v-for="(item , j) in viewTree" :class="{clear: j!=0&&j%3==0}">
+              <div class="sitemap-block">
+                <a :href="item.name">
+                  <div class="sitemap-title p-tb-xs"><span>{{j+1}}</span>{{item.heading}}</div>
+                </a>
+                <div class="sitemap-item p-sm">
+                  <sitemap-ul :node="item.child" :nownumber="j+1" :oldnumber="''"></sitemap-ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </template>
+      <!--footer start-->
+      <footer class="footerbg gd-xs12">
+        <div class="connect ct-row">
+          <div class="gd-sm8 gd-xs12">
+            <div class="text">
+              <li><a href="#bottom" accesskey="B" id="bottom" :title="$t('mainPart.boom')">:::</a></li>
+              <template v-if="ct$footer">
+                <li v-if="ct$footer.name">{{ ct$footer.name }}</li>
+                <li class="line-block p-r-xs" v-if="ct$footer.addr1">{{ ct$footer.addr1 }}</li>
+                <li class="line-block" v-if="ct$footer.addr2">{{ ct$footer.addr2 }}</li>
+                <li v-if="(ct$footer.tel1 || ct$footer.tel2)">
+                  <div class="line-block p-r title" v-t="'footer.tel'"></div>
+                  <div class="line-block p-r-xs" v-if="ct$footer.tel1">{{ ct$footer.tel1 }}</div>
+                  <div class="line-block p-l-xs" v-if="ct$footer.tel2">{{ ct$footer.tel2 }}</div>
+                </li>
+                <li v-if="ct$footer.fax">
+                  <div class="line-block p-r title" v-t="'footer.fax'"></div>
+                  <div class="line-block p-r-sm">{{ ct$footer.fax }}</div>
+                </li>
+                <li v-if="ct$footer.email">
+                  <div class="line-block p-r title" v-t="'global.email'"></div>
+                  <div class="line-block">{{ ct$footer.email }}</div>
+                </li>
+              </template>
+            </div>
+          </div>
+          <div class="gd-sm4 gd-xs12 text viewsbg">
+            <li>
+              <div id="freegoStatement" class="freego" v-if="ct$footer && ct$footer.freegotag" v-html="ct$footer.freegotag"></div>
+            </li>
+            <li>
+              <div class="line-block p-r-xs" v-t="'footer.totalViews'"></div>
+              <div class="line-block">{{ ct$currentSite.visit }}</div>
+            </li>
+            <li>
+              <div class="line-block  p-r-xs" v-t="'footer.todayViews'"></div>
+              <div class="line-block">{{ ct$todayVisitCount }}</div>
+            </li>
+            <div class="gd-xs12 m-t-xs connect-explorer" v-if="ct$footer && ct$footer.suggest" v-t="'footer.suggest'"></div>
+          </div>
+          <div class="gd-xs12 text m-t-md">
+            <template v-if="ct$footer">
+              <a :href="ct$footer.pp" v-if="ct$footer.pp" target="_blank" :title="$t('footer.privacyPolicy')+$t('footer.opennewtab')">
+                <div class="line-block connect-links m-r-sm" v-t="'footer.privacyPolicy'"></div>
+              </a>
+              <a :href="ct$footer.wsp" v-if="ct$footer.wsp" target="_blank" :title="$t('footer.WebsiteSecurityPolicy')+$t('footer.opennewtab')">
+                <div class="line-block connect-links m-r-sm" v-t="'footer.WebsiteSecurityPolicy'"></div>
+              </a>
+              <a :href="ct$footer.odoi" v-if="ct$footer.odoi" target="_blank" :title="$t('footer.openDeclarationOfInformation')+$t('footer.opennewtab')">
+                <div class="line-block connect-links m-r-sm" v-t="'footer.openDeclarationOfInformation'"></div>
+              </a>
+              <a :href="ct$footer.tsrc" v-if="ct$footer.tsrc" target="_blank" :title="$t('footer.thisSiteIsesRegularChinese')+$t('footer.opennewtab')">
+                <div class="line-block connect-links" v-t="'footer.thisSiteIsesRegularChinese'"></div>
+              </a>
+            </template>
+          </div>
+        </div>
+        <div class="copyright" v-if="ct$footer && ct$footer.copyright">{{ ct$footer.copyright }}</div>
+      </footer>
+      <!--footer end-->
+    </div>
+    <!-- gadget end-->
+    <!-- modFrame start -->
+    <div class="ct-row" v-if="focusedModule && eqVal('focusedPage','modFrame')">
+      <div class="gd-sm1"></div>
+      <div class="gd-sm10 subpage">
+        <div class="subpage-top bg-fresh  text-primary text-l">
+          <h2 v-t="'modFrame.setting'"></h2>
+        </div>
+        <div class="m-sm" v-if="focusedModule.setting">
+          <div class="ct-row gd-sm12 form-inline">
+            <div class="form-group-m" style="width: 50%; display: inline-table;">
+              <input v-if="focusedModule.nname" type="text" required="required" id="frameObj" @invalid.prevent v-model="focusedModule.nname">
+              <input v-else type="text" required="required" @invalid.prevent id="frameObj" v-model="focusedModule.setting.name">
+              <label for="frameObj" class="input-label" v-t="'modFrame.name'"></label>
+              <i class="bar"></i>
+              <p class="help-block" style="margin-left: 0px" v-t="'modFrame.font'"></p>
+            </div>
+            <div class="ct-checkbox-m ct-checkbox-inline-m">
+              <input @invalid.prevent id="frame" type="checkbox" v-model="focusedModule.setting.frame">
+              <label for="frame" style="top: 15px; right: 5px;"></label>
+              <span v-t="'modFrame.panel'" style="top: 15px;"></span>
+            </div>
+          </div>
+          <div class="ct-row gd-sm12 form-inline">
+            <div v-if="!focusedModule.xtoken">
+              <div class="form-group-m line-block" style="width: 50%">
+                <input type="text" required="required" class="has-value" :value="focusedModule.token" @keypress.prevent
+                 @keydown.prevent @invalid.prevent ref="shortcut" id="modFrame">
+                <label for="modFrame" class="input-label" v-t="'modFrame.importSid'"></label>
+                <i class="bar"></i>
+              </div>
+              <div class="line-block m-l-sm">
+                <button type="submit" class="ct-btn btn-md radius-xs btn-primary" @click="copyTokenToClipboard" v-t="'modFrame.exportSid'"></button>
+              </div>
+            </div>
+            <div class="form-group-m line-block" style="width: 52%">
+              <input type="text" required="required" class="has-value" @invalid.prevent id="modFrame" v-model="focusedModule.xtoken">
+              <label for="modFrame" class="input-label" v-t="'modFrame.enterSid'"></label>
+              <i class="bar"></i>
+            </div>
+          </div>
+          <!-- layout start -->
+          <div class="ct-row gd-sm12" v-if="ct$isModuleWidth">
+            <div class="form-group-m select" :class="{'select-focus': focusedModule.Wstate}" style="width: 50%; cursor: pointer;">
+              <input type="text" required="required" id="inputWidth" :value="Math.round( focusedModule.setting.width /12 * 100 ) + '%'"
+               @click.stop="$set(focusedModule , 'Wstate' , !focusedModule.Wstate )" @keypress.prevent @keydown.prevent>
+              <input type="hidden">
+              <label for="inputWidth">
+                <i class="input-label-toggle input-label-icon" aria-hidden="true">
+                  <ct-svg svg-src="#{BASE}/img/chevron-down.svg" alt="cdown" title="cdown" key="cdown"></ct-svg>
+                </i>
+              </label>
+              <label for="inputWidth" class="input-label" v-t="'modFrame.width'"></label>
+              <i class="bar"></i>
+            </div>
+            <div class="select-menu-container" :class="{ 'select-visible' : focusedModule.Wstate }">
+              <ul class="select-menu" @click="$set(focusedModule , 'Wstate' , false )" style="margin-top: -34px; width: 50%;">
+                <li class="select-item" :class="{'selected':focusedModule.setting.width == 3}" @click="focusedModule.setting.width = 3">25%</li>
+                <li class="select-item" :class="{'selected':focusedModule.setting.width == 4}" @click="focusedModule.setting.width = 4">33%</li>
+                <li class="select-item" :class="{'selected':focusedModule.setting.width == 6}" @click="focusedModule.setting.width = 6">50%</li>
+                <li class="select-item" :class="{'selected':focusedModule.setting.width == 8}" @click="focusedModule.setting.width = 8">67%</li>
+                <li class="select-item" :class="{'selected':focusedModule.setting.width == 9}" @click="focusedModule.setting.width = 9">75%</li>
+                <li class="select-item" :class="{'selected':focusedModule.setting.width == 12}" @click="focusedModule.setting.width = 12">100%</li>
+              </ul>
+            </div>
+          </div>
+          <!-- layout end -->
+          <div class="gd-xs12 ct-row border border-primary radius-sm">
+			<div class="inputblock-title text-primary text-l">
+				<div class="p-xs float-l">權限設定</div>
+			</div>
+			<div class="ct-row">
+				<div class="ct-checkbox-m ct-checkbox-inline-m" style="padding-left: 22px; margin-bottom: 8px;">
+					<input @invalid.prevent id="login" type="checkbox" v-model="focusedModule.setting.login">
+					<label for="login" style="top: 15px; right: 5px;"></label>
+					<span v-t="'modFrame.login'" style="top: 15px;"></span>
+				</div>
+			</div>
+			<div class="ct-row">
+				<div class="gd-lg4 gd-xs5 p-t-sm p-l-sm">
+					<div class="form-group-m p-r-md" style="cursor: pointer;">
+						<div class="form-group-m select" :class="{'select-focus': getVal('GUstate')}">
+							<input required="required" @invalid.prevent type="text" @click.stop="setVal('GUstate', !getVal('GUstate'))"  @keypress.prevent :value="getVal('GUSelected')? $t('global.'+getVal('GUSelected')) : ''">
+							<input type="hidden">
+							<label for="InputPassword1"><i class="input-label-toggle input-label-icon" aria-hidden="true"><ct-svg svg-src="#{BASE}/img/chevron-down.svg" alt="cdown" title="cdown" key="cdown"></ct-svg></i></label>
+							<label for="InputPassword1" class="input-label" v-t="'global.plzSelectd'"></label><i class="bar"></i></div>
+						<div class="select-menu-container" :class="{'select-visible' : getVal('GUstate') }">
+							<ul class="select-menu" style="margin-top: -34px; width: 93%;">
+								<li class="select-item" :class="{'selected' : eqVal('GUSelected','group') }" @click="setVal('GUSelected', 'group')" v-t="'global.group'"></li>
+								<li class="select-item" :class="{'selected' : eqVal('GUSelected','user') }" @click="setVal('GUSelected', 'user')" v-t="'global.user'"></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+				<div class="gd-lg4 gd-xs5 p-t-sm p-l-sm" style="cursor: pointer;">
+					<div class="form-group-m p-r-md" v-if="eqVal('GUSelected','group')" :key="'selectGroup'">
+						<div class="form-group-m select" :class="{'select-focus':getVal('groupState')}">
+							<input required="required" @invalid.prevent type="text"  @click.stop.prevent="toKeyInGroup" @click="toKeyInGroup" v-model="keyInGroup">
+							<input type="hidden">
+							<label for="qwe"><i class="input-label-toggle input-label-icon" aria-hidden="true"><ct-svg svg-src="#{BASE}/img/chevron-down.svg" alt="cdown" title="cdown" key="cdown"></ct-svg></i></label>
+							<label for="qwe" class="input-label" v-t="'mainPart.setPermissions'"></label><i class="bar"></i>
+						</div>
+						<div class="select-menu-container select" :class="{'select-visible': getVal('groupState')}">
+							<ul class="select-menu" style="margin-top: -34px; width: 93%;">
+								<li class="select-item" v-for="item in groupSeeker" @click="selectGroup(item)">{{ item.name }}</li>
+							</ul>
+						</div>
+					</div>
+					<div class="form-group-m p-r-md" v-if="eqVal('GUSelected','user')" :key="'selectUser'">
+						<div class="form-group-m select" :class="{'select-focus':getVal('userState')}">
+							<input required="required" @invalid.prevent type="text" @click.stop.prevent="toKeyInUser" @keyup="toKeyInUser" v-model="keyInUser">
+							<input type="hidden">
+							<label for="qwe"><i class="input-label-toggle input-label-icon" aria-hidden="true"><ct-svg svg-src="#{BASE}/img/chevron-down.svg" alt="cdown" title="cdown" key="cdown"></ct-svg></i></label>
+							<label for="qwe" class="input-label" v-t="'mainPart.setPermissions'"></label><i class="bar"></i>
+						</div>
+						<div class="select-menu-container select" :class="{'select-visible': getVal('userState')}">
+							<ul class="select-menu" style="margin-top: -34px; width: 93%;">
+								<li class="select-item" v-for="item in userSeeker" @click="selectUser(item)">{{ item.username + '(' + item.name + ')' }}</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+				<div class="gd-lg3 gd-xs1 p-t-sm p-l-sm">
+					<div class="form-group-m" v-if="getVal('GUSelected')">
+						<button type="submit" class="m-r-xs ct-btn btn-md radius-xs btn-primary ct-ripple" @click="confirmSelectModuleItems">
+							<ct-svg class="line-block m-r-xs" key="plus" alt="plus" svg-src="#{BASE}/img/plus.svg"></ct-svg>{{ $t('global.add') }}
+						</button>								
+					</div>
+				</div>
+			</div>
+			<div class="table-responsive p-lr-sm">
+				<table class="ct-table table-striped table-hover">
+					<thead class="thead-light">
+						<tr>
+							<th scope="col">#</th>
+							<th scope="col" v-t="'mainPart.userOrGroup'"></th>
+							<th scope="col" v-t="'mainPart.management'"></th>
+							<th scope="col" v-t="'編輯'"></th>
+							<th scope="col" v-t="'mainPart.use'"></th>
+							<th scope="col" v-t="'global.del'"></th>
+						</tr>
+					</thead>
+					<tbody>
+						<!-- module permission-->
+						<tr v-if="item.module_id && item.module_id.find(function(item){return item == focusedModule._id})"  v-for="(item, index) in focusedModulePermission">
+							<th scope="row">{{ index+1 }}</th>
+							<td v-if="item.obj.type=='user'">{{ item.obj.name }}</td>
+							<td  v-if="item.obj.type=='group'">{{ item.obj.name }}</td>
+							<td>
+								<div class="ct-radio-m">
+									<input :id="item._id+'m'" type="radio" :name="item._id" :checked="getVal('$p'+item._id)=='manage'" @click.stop="setModulePermission(item.obj, 'manage')">
+									<label :for="item._id+'m'"></label>
+								</div>
+							</td>
+							<td>
+								<div class="ct-radio-m">
+									<input :id="item._id+'e'" type="radio" :name="item._id" :checked="getVal('$p'+item._id)=='edit'" @click.stop="setModulePermission(item.obj, 'edit')">
+									<label :for="item._id+'e'"></label>
+								</div>
+							</td>
+							<td>
+								<div class="ct-radio-m">
+									<input :id="item._id+'u'" type="radio" :name="item._id" :checked="getVal('$p'+item._id)=='use'" @click.stop="setModulePermission(item.obj, 'use')">
+									<label :for="item._id+'u'"></label>
+								</div>
+							</td>
+							<td>
+								<div @click.stop="setModulePermission(item.obj, false)">
+									<ct-svg key="trash-alt" class="svgicon-delete m-t-o-xs" svg-src="#{BASE}/img/trash-alt.svg" alt="trash-alt"></ct-svg>
+								</div>
+							</td>
+						</tr>
+						<!-- module permission-->
+					</tbody>
+				</table>
+			</div>
+		</div>
+          <div class="ct-row gd-sm12 p-md text-c">
+            <button class="m-r ct-btn btn-md btn-secondary ct-ripple radius-xs" @click="setVal('focusedPage','gadget')">
+              <ct-svg key="times" class="line-block" svg-src="#{BASE}/img/times.svg" alt="times.svg"></ct-svg>
+              {{ $t('global.cancel') }}
+            </button>
+            <!--button class="m-r ct-btn btn-md btn-danger ct-ripple" @click="modFramDelete()"-->
+            <button class="m-r ct-btn btn-md btn-danger ct-ripple radius-xs" @click="recycleModule">
+              <ct-svg key="trash-alt" class="svg-white line-block" svg-src="#{BASE}/img/trash-alt.svg" alt="trash-alt"></ct-svg>
+              {{ $t('topBar.recycling') }}
+            </button>
+            <!--button class="m-r ct-btn btn-md btn-confirm ct-ripple" @click="modFrameSave"-->
+            <button class="m-r ct-btn btn-md btn-confirm ct-ripple radius-xs" @click="updateModule">
+              <ct-svg key="check" class="line-block" svg-src="#{BASE}/img/check.svg" alt="check"></ct-svg>
+              {{ $t('global.save') }}
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="gd-sm1"></div>
+    </div>
+    <!-- modFrame end -->
+    <!-- page start-->
+    <div class="ct-row" v-if="eqVal('focusedPage','page')">
+      <div class="gd-sm1"></div>
+      <div class="gd-sm10 subpage" @end="dragPage">
+        <div class="subpage-top bg-fresh text-primary text-l">
+          <h2>{{$t('mainPart.editPage')}}</h2>
+          <div class="homepage-edit float-r" style="top: 5.5px; right: 15px;">
+            <button class="ct-btn btn-xs btn-white radius-xs btn-min-sm" @click.prevent="editPage()" style="font-size: 0.9rem; border: 1px solid #ccc; color: #4670bb;">
+              <ct-svg key="ellipsis-v" alt="ellipsis-v" class="page-icon line-block" style="vertical-align: sub; margin-top: 0px; margin-left: -13px;"
+               svg-src="#{BASE}/img/ellipsis-v.svg"></ct-svg>
+              {{ $t('mainPart.editPage') }}
+            </button>
+            <button class="ct-btn btn-xs btn-white radius-xs btn-min-sm" @click.prevent="insertPage()" style="font-size: 0.9rem; border: 1px solid #ccc; color: #4670bb;">
+              <ct-svg key="plus" alt="plus" class="page-icon line-block" style="vertical-align: sub; margin-top: 0px; margin-left: -13px;"
+               svg-src="#{BASE}/img/plus.svg"></ct-svg>
+              {{ $t('mainPart.addPage') }}
+            </button>
+          </div>
+        </div>
+        <draggable :list="tree" :options="{ ghostClass: 'nav-ghost' , dragClass: 'nav-drag' , group:'nav-out' , chosenClass:'nav-chosen' , animation: 150 }">
+          <div class="gd-md4 gd-sm12 p-sm dragging" :key="item._id+j" v-for="(item, j) in tree" :class="{clear: j!=0&&j%3==0}">
+            <div class="sitemap-block">
+              <a href="#" @click.prevent>
+                <div class="sitemap-title pageedit p-tb-xs">{{ item.hide? '(' + $t('mainPart.hide') + ')' : '' }}<span>{{ j+1 }}</span>{{item.heading}}
+                  <div class="pageeditbtn">
+                    <button class="btn-xs border-no bg-no" @click="editPage(item)">
+                      <ct-svg key="ellipsis-v" alt="ellipsis-v" class="page-icon float-r" svg-src="#{BASE}/img/ellipsis-v.svg"></ct-svg>
+                    </button>
+                    <button class="btn-xs border-no bg-no" @click.prevent="insertPage(item)">
+                      <ct-svg key="plus" alt="plus" class="page-icon float-r" svg-src="#{BASE}/img/plus.svg"></ct-svg>
+                    </button>
+                  </div>
+                </div>
+              </a>
+              <div class="ct-page-item p-sm">
+                <sitemap-ul-edit :node="item.child" :nownumber="j+1" :oldnumber="''" @call-receive-api="editPage"></sitemap-ul-edit>
+              </div>
+            </div>
+          </div>
+        </draggable>
+      </div>
+      <div class="gd-sm1"></div>
+    </div>
+    <!-- page end-->
+    <!-- adv page start -->
+    <div class="ct-row" v-else-if="eqVal('focusedPage','pageAdvanced')">
+      <div class="gd-sm1"></div>
+      <div class="gd-sm10 subpage">
+        <div class="subpage-top bg-fresh  text-primary text-l">
+          <h2 v-t="'mainPart.editPageAdvanced'"></h2>
+        </div>
+        <div class="m-md ct-row" @submit.prevent>
+          <div class="gd-lg4 gd-xs12">
+            <div class="form-group-m p-r-md">
+              <input type="text" required="required" @invalid.prevent v-model="focusedPage.heading">
+              <label for="name" class="input-label" v-t="'mainPart.pageTitle'"></label><i class="bar"></i>
+              <p class="help-block" style="margin-left: 0px" v-t="'global.plzEnterThirty'"></p>
+            </div>
+          </div>
+          <!-- page Type -->
+          <div class="gd-lg3 gd-xs6" v-if="focusedPage.name !== 'index'">
+            <div ref="toggle1" class="form-group-m select p-r-md " style="cursor: pointer;">
+              <input class="has-value" id="pagetype" required="required" :title="$t('mainPart.pagetype')" :value="$t('mainPart.'+['pagetypeIntranet', 'pagetypeExtranet', 'pagetypeNone'][focusedPage.pageTypeNo])"
+               @click.stop="selectPageType" @invalid.prevent type="text" @keypress.prevent readonly>
+              <input type="hidden">
+              <label for="pagetype">
+                <ct-svg class="input-label-toggle input-label-icon" svg-src="#{BASE}/img/chevron-down.svg" alt="cdown" title="cdown"
+                 key="cdown"></ct-svg>
+              </label>
+              <label for="pagetype" class="input-label" v-t="'mainPart.pagetype'"></label>
+              <i class="bar"></i>
+            </div>
+            <div ref="toggle2" class="select-menu-container">
+              <ul class="select-menu" style="margin-top: -34px; width: 93%;">
+                <li class="select-item ct-ripple" @click="[focusedPage.pageTypeNo=0,focusedPage.name='']" v-t="'mainPart.pagetypeIntranet'"></li>
+                <li class="select-item ct-ripple" @click="[focusedPage.pageTypeNo=1,focusedPage.name='']" v-t="'mainPart.pagetypeExtranet'"></li>
+                <li class="select-item ct-ripple" @click="focusedPage.pageTypeNo=2,focusedPage.name='javascript:void(0)'" v-t="'mainPart.pagetypeNone'"></li>
+              </ul>
+            </div>
+          </div>
+          <div v-if="focusedPage.pageTypeNo!=2" class="gd-lg3 gd-xs6">
+            <div class="form-group-m p-r-md">
+              <input type="text" required="required" class="has-value" :placeholder="'path'" @invalid.prevent v-model="focusedPage.name"
+               v-if="focusedPage.name !== 'index' && !focusedPage.pageTypeNo">
+              <input type="text" required="required" class="has-value" :placeholder="'http://example.com'" @invalid.prevent
+               v-model="focusedPage.name" v-if="focusedPage.name !== 'index' && focusedPage.pageTypeNo==1">
+              <input type="text" required="required" :placeholder="2" @invalid.prevent v-model="focusedPage.name"
+               @keypress.prevent v-if="focusedPage.name == 'index'">
+              <label for="name" class="input-label" v-t="'mainPart.pageLink'">?</label><i class="bar"></i>
+              <p class="help-block" style="margin-left: 0px" v-t="'global.plzEnterEngAndNum'"></p>
+            </div>
+          </div>
+          <!-- page Type -->
+          <div class="gd-lg2 gd-xs12">
+            <div class="form-group-m p-r-md" v-if="focusedPage.name !== 'index'">
+              <div class="line-block p-l-xs">
+                <div class="ct-checkbox-m">
+                  <input id="pds" type="checkbox" v-model="focusedPage.hide" @invalid.prevent>
+                  <label for="pds" style="top: 6px;"></label>
+                </div>
+              </div>
+              <div class="title line-block m-t-xs" v-t="'modFrame.display'"></div>
+            </div>
+          </div>
+          <!-- page SEO -->
+          <div class="gd-xs12 form-group-m chip-inline">
+            <div class="ct-chip chip-secondary p-lr-xxs" v-for="item in focusedPage.seo" style="margin-top: 0px;">
+              <span>{{item.content}}</span>
+              <button type="button" class="ct-chip-remove ct-ripple" @click="delKeyword(item)" title="刪除">
+                <ct-svg class="ct-fa" key="remove" svg-src="#{BASE}/img/cross.svg"></ct-svg>
+              </button>
+            </div>
+            <input type="text" required="required" id="pageseo" name="pageseo" @keyup.enter="addKeyword" v-model="focusedPage.pageKey"
+             placeholder="輸入欲設定的頁面關鍵字，按Enter後新增" remark="輸入欲設定的頁面關鍵字，按Enter後新增">
+            <label for="pageseo" class="label-hide"></label><i class="bar"></i>
+          </div>
+          <!-- page SEO -->
+          <div class="gd-xs12 ct-row border border-primary radius-sm">
+            <div class="inputblock-title text-primary text-l">
+              <div class="p-xs float-l" v-t="'mainPart.permissionSet'"></div>
+            </div>
+            <div class="ct-row">
+              <div class="ct-checkbox-m ct-checkbox-inline-m" style="padding-left: 22px; margin-bottom: 8px;">
+                <input id="login" type="checkbox" v-model="focusedPage.login_lock" @invalid.prevent>
+                <label for="login" style="top: 15px; right: 5px;"></label>
+                <span style="top: 15px;" v-t="'modFrame.login'"></span>
+              </div>
+            </div>
+            <div class="gd-lg3 gd-xs6 p-t-sm p-l-sm">
+              <div class="form-group-m select p-r-md" :class="{'select-focus': getVal('GUstate')}" style="cursor: pointer;">
+                <input required="required" @invalid.prevent type="text" @click.stop="setVal('GUstate', !getVal('GUstate'))"
+                 @keypress.prevent :value="getVal('GUSelected')? $t('global.'+getVal('GUSelected')) : ''">
+                <input type="hidden">
+                <label for="InputPassword1">
+                  <ct-svg class="input-label-toggle input-label-icon" svg-src="#{BASE}/img/chevron-down.svg" alt="cdown" title="cdown"
+                   key="cdown"></ct-svg>
+                </label>
+                <label for="InputPassword1" class="input-label" v-t="'global.plzSelectd'"></label>
+                <i class="bar"></i>
+              </div>
+              <div class="select-menu-container" :class="{'select-visible' : getVal('GUstate') }">
+                <ul class="select-menu" style="margin-top: -34px; width: 87%;">
+                  <li class="select-item ct-ripple" :class="{'selected' : eqVal('GUSelected','group') }" @click="setVal('GUSelected', 'group')"
+                   v-t="'global.group'"></li>
+                  <li class="select-item ct-ripple" :class="{'selected' : eqVal('GUSelected','user') }" @click="setVal('GUSelected', 'user')"
+                   v-t="'global.user'"></li>
+                </ul>
+              </div>
+            </div>
+            <div class="gd-lg6 gd-xs6 p-t-sm p-r-sm" v-if="eqVal('GUSelected','group')" :key="'selectGroup'">
+              <div class="form-group-m select" :class="{'select-focus':getVal('groupState')}" style="cursor: pointer;">
+                <input required="required" @invalid.prevent type="text" @click.stop.prevent="toKeyInGroup" @click="toKeyInGroup"
+                 v-model="keyInGroup">
+                <input type="hidden">
+                <label for="qwe">
+                  <ct-svg class="input-label-toggle input-label-icon" svg-src="#{BASE}/img/chevron-down.svg" alt="cdown" title="cdown"
+                   key="cdown"></ct-svg>
+                </label>
+                <label for="qwe" class="input-label" v-t="'mainPart.setPermissions'"></label>
+                <i class="bar"></i>
+              </div>
+              <div class="select-menu-container select" :class="{'select-visible': getVal('groupState')}">
+                <ul class="select-menu" style="margin-top: -34px; width: 97%;">
+                  <li class="select-item ct-ripple" v-for="item in groupSeeker" @click="selectGroup(item)">{{ item.name }}</li>
+                </ul>
+              </div>
+            </div>
+            <div class="gd-lg6 gd-xs6 p-t-sm p-r-sm" v-if="eqVal('GUSelected','user')" :key="'selectUser'">
+              <div class="form-group-m select" :class="{'select-focus':getVal('userState')}" style="cursor: pointer;">
+                <input required="required" @invalid.prevent type="text" @click.stop.prevent="toKeyInUser" @keyup="toKeyInUser"
+                 v-model="keyInUser">
+                <input type="hidden">
+                <label for="qwe">
+                  <ct-svg class="input-label-toggle input-label-icon" svg-src="#{BASE}/img/chevron-down.svg" alt="cdown" title="cdown"
+                   key="cdown"></ct-svg>
+                </label>
+                <label for="qwe" class="input-label" v-t="'mainPart.setPermissions'"></label>
+                <i class="bar"></i>
+              </div>
+              <div class="select-menu-container select" :class="{'select-visible': getVal('userState')}">
+                <ul class="select-menu" style="margin-top: -34px; width: 97%;">
+                  <li class="select-item ct-ripple" v-for="item in userSeeker" @click="selectUser(item)">{{ item.username + '('
+                    + item.name + ')' }}</li>
+                </ul>
+              </div>
+            </div>
+            <div class="gd-lg3 gd-xs12 p-sm text-l m-t-xs" v-if="getVal('GUSelected')">
+              <!--button type="submit" class="m-r-xs ct-btn btn-md radius-xs btn-primary ct-ripple" @click="addModAG"-->
+              <button type="button" class="m-r-xs ct-btn btn-md btn-min-md radius-xs btn-primary ct-ripple" @click="confirmSelectPageItems">
+                <ct-svg class="line-block btn-svg" key="plus" alt="plus" svg-src="#{BASE}/img/plus.svg"></ct-svg>{{
+                $t('mainPart.permissionAdd') }}
+              </button>
+            </div>
+            <div class="table-responsive p-lr-sm">
+              <table class="ct-table table-striped table-hover">
+                <thead class="thead-light">
+                  <tr>
+                    <th scope="col" style="width: 10%">#</th>
+                    <th scope="col" style="width: 60%" v-t="'mainPart.userOrGroup'"></th>
+                    <th scope="col" style="width: 10%" v-t="'mainPart.management'"></th>
+                    <th scope="col" style="width: 10%" v-t="'mainPart.use'"></th>
+                    <th scope="col" style="width: 10%" v-t="'global.del'"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- page permission -->
+                  <tr v-if="item.page_id && item.page_id.find(function(item){return item == focusedPage._id})" v-for="(item, index) in focusedPagePermission">
+                    <th scope="row">{{ index+1 }}</th>
+                    <td v-if="item.obj.type=='user'">{{ item.obj.name }}</td>
+                    <td v-if="item.obj.type=='group'">{{ item.obj.name }}</td>
+                    <td>
+                      <div class="ct-radio-m">
+                        <input :id="item._id+'m'" type="radio" :name="item._id" :checked="getVal('$p'+item._id)=='manage'"
+                         @click.stop="setPagePermission(item.obj, 'manage')">
+                        <label :for="item._id+'m'"></label>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="ct-radio-m">
+                        <input :id="item._id+'u'" type="radio" :name="item._id" :checked="getVal('$p'+item._id)=='use'" @click.stop="setPagePermission(item.obj, 'use')">
+                        <label :for="item._id+'u'"></label>
+                      </div>
+                    </td>
+                    <td>
+                      <div @click.stop="setPagePermission(item.obj, false)">
+                        <ct-svg key="trash-alt" class="svgicon-delete m-t-o-xs" svg-src="#{BASE}/img/trash-alt.svg" alt="trash-alt"
+                         :title="$t('global.del')"></ct-svg>
+                      </div>
+                    </td>
+                  </tr>
+                  <!-- page permission -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="gd-xs12 m-t-md p-md text-c">
+            <button class="ct-btn btn-md btn-min-md radius-xs btn-secondary m-r ct-ripple" @click.prevent="setVal('focusedPage','page')">
+              <ct-svg key="times" alt="times" class="line-block m-r-xs" svg-src="#{BASE}/img/times.svg"></ct-svg>{{$t('global.cancel')}}
+            </button>
+            <button class="ct-btn btn-md btn-min-md radius-xs m-r ct-ripple btn-danger" v-if="focusedPage.name != 'index' && focusedPage._id"
+             @click.prevent="deletePage">
+              <ct-svg key="trash-alt" class="line-block m-r-xs" svg-src="#{BASE}/img/trash-alt.svg" alt="trash-alt"></ct-svg>{{
+              $t('global.del') }}
+            </button>
+            <button class="ct-btn btn-md btn-min-md radius-xs btn-confirm ct-ripple" @click.prevent="updatePage">
+              <ct-svg key="check" alt="check" class="line-block m-r-xs" svg-src="#{BASE}/img/check.svg"></ct-svg>{{$t('global.save')}}
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="gd-sm1"></div>
+    </div>
+    <!-- adv page end -->
+    <!-- site start -->
+    <div class="ct-row" v-else-if="eqVal('focusedPage' , 'settings')">
+      <div class="gd-sm1"></div>
+      <div class="gd-sm10 subpage">
+        <div class="subpage-top bg-fresh text-primary text-l">
+          <h2 v-t="'mainPart.siteAdvanced'"></h2>
+        </div>
+        <div @submit.prevent class="m-md ct-row">
+          <div class="gd-lg9 gd-xs8" key="sitename">
+            <div class="form-group-m">
+              <input @invalid.prevent required="required" type="text" v-model="focusedSite.title">
+              <label for="name" class="input-label" v-t="'sideBar.siteName'"></label><i class="bar"></i>
+            </div>
+          </div>
+          <div class="gd-lg3 gd-xs4">
+            <div class="form-group-m">
+              <div class="line-block" style="padding-top: 10px; padding-left: 12px;">
+                <div class="ct-checkbox-m">
+                  <input id="view_checkbox1" type="checkbox" v-model="focusedSite.showlogin" @invalid.prevent required>
+                  <label for="view_checkbox1"></label>
+                </div>
+              </div>
+              <div class="title line-block" style="padding-top: 12px;" v-t="'mainPart.displayLoginBtn'"></div>
+            </div>
+          </div>
+          <div class="gd-xs12">
+            <div class="form-group-m textarea-m">
+              <textarea @invalid.prevent required="required" rows="3" v-model="focusedSite.seo[1].content"></textarea>
+              <label for="textarea" class="input-label" v-t="'sideBar.siteDescription'"></label>
+              <i class="bar"></i>
+            </div>
+          </div>
+          <div class="gd-xs9">
+            <div class="form-group-m">
+              <input @invalid.prevent required="required" id="inputname" type="text" v-model="focusedSite.logo.name">
+              <label for="inputname" class="input-label" v-t="'mainPart.siteTitle'"></label>
+              <i class="bar"></i>
+              <p class="help-block" style="margin-left: 0px" v-t="'mainPart.siteDescription'"></p>
+            </div>
+          </div>
+          <div class="gd-xs12 ct-row border p-md border-secondary radius-sm">
+            <div class="gd-sm6 border-r border-secondary">
+              <div class="m-b">
+                <div class="title line-block" v-t="'mainPart.logoTitle'"></div>
+                <div class="line-block p-t-xxs">
+                  <p class="help-block" style="margin-left: 5px" v-t="'mainPart.logoRemind'"></p>
+                </div>
+              </div>
+              <div class="m-r-md m-b sitelogo">
+                <img v-if="focusedSite.logo.img" :src="focusedSite.logo.img" alt="default">
+                <img v-else src="#{BASE}/img/sample-logo.jpg" alt="default">
+              </div>
+              <div class="p-tb-sm" style="vertical-align:top">
+                <input type="file" @change="upLogo" ref="changelogo" style="display:none">
+                <button @click="$refs.changelogo.click()" class="m-r-xs ct-btn btn-md radius-xs btn-primary">
+                  <ct-svg key="upload" class="btn-svg" svg-src="#{BASE}/img/file_upload.svg"></ct-svg>{{ $t('global.upload')}}
+                </button>
+                <button class="m-r-xs ct-btn btn-md radius-xs btn-secondary" @click="displayLogo">
+                  <template v-if="!focusedSite.logo.display || focusedSite.logo.display === 'hide'">
+                    <ct-svg key="hide" class="btn-svg" svg-src="#{BASE}/img/eye-hide.svg"></ct-svg> {{ $t('mainPart.hide') }}
+                  </template>
+                  <template v-else>
+                    <ct-svg key="show" class="btn-svg" svg-src="#{BASE}/img/visibility.svg"></ct-svg>{{ $t('mainPart.show') }}
+                  </template>
+                </button>
+                <button class="ct-btn btn-md radius-xs btn-danger" @click="delLogo">
+                  <ct-svg key="delete" class="btn-svg" svg-src="#{BASE}/img/delete.svg"></ct-svg>{{ $t('global.del')}}
+                </button>
+              </div>
+            </div>
+            <div class="gd-sm6 p-l-md">
+              <div class="m-b">
+                <div class="title line-block" v-t="'mainPart.faviconTitle'"></div>
+                <div class="line-block p-t-xxs">
+                  <p class="help-block" style="margin-left: 5px" v-t="'mainPart.faviconRemind'"></p>
+                </div>
+              </div>
+              <div class="m-r-md m-b sitefavicon">
+                <img v-if="focusedSite.logo.favicon" :src="focusedSite.logo.favicon" alt="default">
+                <img v-else src="#{BASE}/img/sample-favicon.jpg" alt="default">
+              </div>
+              <div class="p-tb-sm" style="vertical-align:top">
+                <input type="file" @change="upFavicon" ref="changefavicon" style="display:none">
+                <button @click="$refs.changefavicon.click()" class="m-r-xs ct-btn btn-md radius-xs btn-primary">
+                  <ct-svg key="upload" class="btn-svg" svg-src="#{BASE}/img/file_upload.svg"></ct-svg>{{ $t('global.upload')}}
+                </button>
+                <button class="ct-btn btn-md radius-xs btn-danger" @click="delFavicon">
+                  <ct-svg key="delete" class="btn-svg" svg-src="#{BASE}/img/delete.svg"></ct-svg>{{ $t('global.del')}}
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="gd-xs12 ct-row m-t-md p-md text-c">
+            <button class="ct-btn btn-md btn-min-md radius-xs btn-secondary m-r ct-ripple" @click="setVal('focusedPage','gadget')">
+              <ct-svg key="times" alt="times" class="line-block m-r-xs" svg-src="#{BASE}/img/times.svg"></ct-svg>{{$t('global.cancel')}}
+            </button>
+            <button class="ct-btn btn-md btn-min-md radius-xs btn-confirm ct-ripple" @click="updateSite">
+              <ct-svg key="check" alt="check" class="line-block m-r-xs" svg-src="#{BASE}/img/check.svg"></ct-svg>{{$t('global.save')}}
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="gd-sm1"></div>
+    </div>
+    <!-- site end -->
+    <!-- seo start -->
+    <div class="ct-row" v-else-if="eqVal('focusedPage' , 'setSeo')">
+      <div class="gd-sm1"></div>
+      <div class="gd-sm10 subpage">
+        <div class="subpage-top bg-fresh text-primary text-l">
+          <h2 v-t="'sideBar.setSeo'"></h2>
+        </div>
+        <div class="m-md">
+          <div class="form-group-m textarea-m">
+            <textarea required v-model="focusedSite.meta.googletrack" rows="3" @invalid.prevent></textarea>
+            <label for="textarea" class="input-label" v-t="'mainPart.pageTrack'"></label>
+            <i class="bar"></i>
+          </div>
+          <div class="form-group-m">
+            <input @invalid.prevent required="required" id="textarea" type="text" v-model="focusedSite.meta.googlesearch">
+            <label for="textarea" class="input-label" v-t="'mainPart.pageSearch'"></label>
+            <i class="bar"></i>
+          </div>
+          <div class="form-group-m">
+            <input @invalid.prevent required="required" type="text" v-model="focusedSite.seo[0].content">
+            <label for="keyword" class="input-label" v-t="'sideBar.keyWord'"></label><i class="bar"></i>
+          </div>
+          <!--
+          <div class="gd-xs12 form-group-m chip-inline">
+            <div class="ct-chip chip-secondary p-lr-xxs" v-for="item in focusedPage.seo" style="margin-top: 0px;">
+              <span>{{item.content}}</span>
+              <button type="button" class="ct-chip-remove ct-ripple" @click="delKeyword(item)" title="刪除">
+                <ct-svg class="ct-fa" key="remove" svg-src="#{BASE}/img/cross.svg"></ct-svg>
+              </button>
+            </div>
+            <input type="text" required="required" id="pageseo" name="pageseo" @keyup.enter="addKeyword" v-model="focusedPage.pageKey" placeholder="輸入欲設定的頁面關鍵字，按Enter後新增" remark="輸入欲設定的頁面關鍵字，按Enter後新增">
+            <label for="pageseo" class="label-hide"></label><i class="bar"></i>
+          </div>
+          -->
+          <div class="m-t-lg p-md text-c">
+            <button class="ct-btn btn-md btn-min-md radius-xs btn-secondary m-r ct-ripple" @click="setVal('focusedPage','gadget')">
+              <ct-svg key="times" alt="times" class="line-block m-r-xs" svg-src="#{BASE}/img/times.svg"></ct-svg>{{$t('global.cancel')}}
+            </button>
+            <button class="ct-btn btn-md btn-min-md radius-xs btn-confirm ct-ripple" @click="updateSite">
+              <ct-svg key="check" alt="check" class="line-block m-r-xs" svg-src="#{BASE}/img/check.svg"></ct-svg>{{$t('global.save')}}
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="gd-sm1"></div>
+    </div>
+    <!-- seo end -->
+    <!-- siteFooter start -->
+    <div class="ct-row" v-else-if="eqVal('focusedPage' , 'setFooter')">
+      <div class="gd-sm1"></div>
+      <div class="gd-sm10 subpage">
+        <div class="subpage-top bg-fresh  text-primary text-l">
+          <h2 v-t="'footer.setfooter'"></h2>
+        </div>
+        <!--模組設定 start-->
+        <form class="form-horizontal m-lg" @submit.prevent>
+          <div class="form-group-m">
+            <input type="text" @invalid.prevent required="required" id="footername" v-model="focusedSite.footer.name">
+            <label for="footername" class="input-label" v-t="'footer.name'"></label>
+            <i class="bar"></i>
+            <p class="help-block" style="margin-left: 0px" v-t="'footer.exp'"></p>
+          </div>
+          <div class="form-inline">
+            <div class="form-group-m m-r-lg footer-tel">
+              <input type="text" @invalid.prevent required="required" id="tel1" v-model="focusedSite.footer.tel1">
+              <label for="tel1" class="input-label" v-t="'footer.tel'">1</label>
+              <i class="bar"></i>
+            </div>
+            <div class="form-group-m m-r-lg footer-tel">
+              <input type="text" @invalid.prevent required="required" id="tel2" v-model="focusedSite.footer.tel2">
+              <label for="tel2" class="input-label" v-t="'footer.tel'">2</label>
+              <i class="bar"></i>
+            </div>
+            <div class="form-group-m footer-tel">
+              <input type="text" @invalid.prevent required="required" id="fax" v-model="focusedSite.footer.fax">
+              <label for="fax" class="input-label" v-t="'footer.fax'"></label>
+              <i class="bar"></i>
+            </div>
+          </div>
+          <div class="form-group-m">
+            <input type="text" @invalid.prevent required="required" id="addr1" v-model="focusedSite.footer.addr1">
+            <label for="addr1" class="input-label" v-t="'footer.addr'">1</label>
+            <i class="bar"></i>
+          </div>
+          <div class="form-group-m">
+            <input type="text" @invalid.prevent required="required" id="addr2" v-model="focusedSite.footer.addr2">
+            <label for="addr2" class="input-label" v-t="'footer.addr'">2</label>
+            <i class="bar"></i>
+          </div>
+          <div class="form-group-m footer-email">
+            <input type="text" @invalid.prevent required="required" id="footerEMail" v-model="focusedSite.footer.email">
+            <label for="footerEMail" class="input-label" v-t="'global.email'"></label>
+            <i class="bar"></i>
+          </div>
+          <div class="form-group-m">
+            <input type="text" @invalid.prevent required="required" id="copyright" v-model="focusedSite.footer.copyright">
+            <label for="copyright" class="input-label" v-t="'footer.copyright'"></label>
+            <i class="bar"></i>
+          </div>
+          <div class="form-group-m textarea-m textarea-m-help">
+            <textarea required="" @invalid.prevent rows="3" name="freegotag" v-model="focusedSite.footer.freegotag"></textarea>
+            <label for="freegotag" class="input-label">{{$t('footer.freegoTag')}}</label>
+            <i class="bar"></i>
+            <p class="help-block" style="margin-left: 0px" v-t="'global.plzPasteEmb'"></p>
+          </div>
+          <div class="form-group-m">
+            <input type="text" @invalid.prevent required="required" id="PP" v-model="focusedSite.footer.pp">
+            <label for="PP" class="input-label" v-t="'footer.privacyPolicy'"></label>
+            <i class="bar"></i>
+            <p class="help-block" style="margin-left: 0px" v-t="'global.plzEnterlink'"></p>
+          </div>
+          <div class="form-group-m">
+            <input type="text" @invalid.prevent required="required" id="wsp" v-model="focusedSite.footer.wsp">
+            <label for="wsp" class="input-label" v-t="'footer.WebsiteSecurityPolicy'"></label>
+            <i class="bar"></i>
+            <p class="help-block" style="margin-left: 0px" v-t="'global.plzEnterlink'"></p>
+          </div>
+          <div class="form-group-m">
+            <input type="text" @invalid.prevent required="required" id="odoi" v-model="focusedSite.footer.odoi">
+            <label for="odoi" class="input-label" v-t="'footer.openDeclarationOfInformation'"></label>
+            <i class="bar"></i>
+            <p class="help-block" style="margin-left: 0px" v-t="'global.plzEnterlink'"></p>
+          </div>
+          <div class="form-group-m">
+            <input type="text" @invalid.prevent required="required" id="tsrc" v-model="focusedSite.footer.tsrc">
+            <label for="tsrc" class="input-label" v-t="'footer.thisSiteIsesRegularChinese'"></label>
+            <i class="bar"></i>
+            <p class="help-block" style="margin-left: 0px" v-t="'global.plzEnterlink'"></p>
+          </div>
+          <div class="form-group-m">
+            <div class="title line-block m-r" v-t="'footer.suggestset'"></div>
+            <div class="ct-checkbox-m line-block p-t-xxs">
+              <input type="checkbox" @invalid.prevent id="footerSuggest" v-model="focusedSite.footer.suggest" class="ct-switch-m">
+              <label for="footerSuggest"></label>
+            </div>
+            <p class="help-block" style="margin-left: 0px" v-t="'footer.browser'"></p>
+          </div>
+          <div class="m-t-lg p-md text-c border-t border-fresh">
+            <button class="ct-btn btn-md btn-min-md btn-secondary m-r ct-ripple radius-xs" @click="setVal('focusedPage' , 'gadget')">
+              <ct-svg key="times" alt="times" class="line-block" svg-src="#{BASE}/img/times.svg"></ct-svg>{{$t('global.cancel')}}
+            </button>
+            <button class="ct-btn btn-md btn-min-md btn-confirm ct-ripple radius-xs" @click="updateFooter">
+              <ct-svg key="check" alt="check" class="line-block" svg-src="#{BASE}/img/check.svg"></ct-svg>{{$t('global.save')}}
+            </button>
+          </div>
+        </form>
+      </div>
+      <div class="gd-sm1"></div>
+    </div>
+    <!-- siteFooter end -->
+    <!-- subsite start -->
+    <div class="ct-row" v-else-if="eqVal('focusedPage' , 'setFooter')">
+      <div class="gd-sm1"></div>
+      <div class="gd-sm10 subpage">
+        <div class="subpage-top bg-fresh  text-primary text-l">
+          <h2 v-t="'footer.setfooter'"></h2>
+        </div>
+        <!--模組設定 start-->
+        <form class="form-horizontal m-lg" @submit.prevent>
+          <div class="form-group-m">
+            <input type="text" @invalid.prevent required="required" id="footername" v-model="focusedSite.footer.name">
+            <label for="footername" class="input-label" v-t="'footer.name'"></label>
+            <i class="bar"></i>
+            <p class="help-block" style="margin-left: 0px" v-t="'footer.exp'"></p>
+          </div>
+          <div class="form-inline">
+            <div class="form-group-m m-r-lg footer-tel">
+              <input type="text" @invalid.prevent required="required" id="tel1" v-model="focusedSite.footer.tel1">
+              <label for="tel1" class="input-label" v-t="'footer.tel'">1</label>
+              <i class="bar"></i>
+            </div>
+            <div class="form-group-m m-r-lg footer-tel">
+              <input type="text" @invalid.prevent required="required" id="tel2" v-model="focusedSite.footer.tel2">
+              <label for="tel2" class="input-label" v-t="'footer.tel'">2</label>
+              <i class="bar"></i>
+            </div>
+            <div class="form-group-m footer-tel">
+              <input type="text" @invalid.prevent required="required" id="fax" v-model="focusedSite.footer.fax">
+              <label for="fax" class="input-label" v-t="'footer.fax'"></label>
+              <i class="bar"></i>
+            </div>
+          </div>
+          <div class="form-group-m">
+            <input type="text" @invalid.prevent required="required" id="addr1" v-model="focusedSite.footer.addr1">
+            <label for="addr1" class="input-label" v-t="'footer.addr'">1</label>
+            <i class="bar"></i>
+          </div>
+          <div class="form-group-m">
+            <input type="text" @invalid.prevent required="required" id="addr2" v-model="focusedSite.footer.addr2">
+            <label for="addr2" class="input-label" v-t="'footer.addr'">2</label>
+            <i class="bar"></i>
+          </div>
+          <div class="form-group-m footer-email">
+            <input type="text" @invalid.prevent required="required" id="footerEMail" v-model="focusedSite.footer.email">
+            <label for="footerEMail" class="input-label" v-t="'global.email'"></label>
+            <i class="bar"></i>
+          </div>
+          <div class="form-group-m">
+            <input type="text" @invalid.prevent required="required" id="copyright" v-model="focusedSite.footer.copyright">
+            <label for="copyright" class="input-label" v-t="'footer.copyright'"></label>
+            <i class="bar"></i>
+          </div>
+          <div class="form-group-m textarea-m textarea-m-help">
+            <textarea required="" @invalid.prevent rows="3" name="freegotag" v-model="focusedSite.footer.freegotag"></textarea>
+            <label for="freegotag" class="input-label">{{$t('footer.freegoTag')}}</label>
+            <i class="bar"></i>
+            <p class="help-block" style="margin-left: 0px" v-t="'global.plzPasteEmb'"></p>
+          </div>
+          <div class="form-group-m">
+            <input type="text" @invalid.prevent required="required" id="PP" v-model="focusedSite.footer.pp">
+            <label for="PP" class="input-label" v-t="'footer.privacyPolicy'"></label>
+            <i class="bar"></i>
+            <p class="help-block" style="margin-left: 0px" v-t="'global.plzEnterlink'"></p>
+          </div>
+          <div class="form-group-m">
+            <input type="text" @invalid.prevent required="required" id="wsp" v-model="focusedSite.footer.wsp">
+            <label for="wsp" class="input-label" v-t="'footer.WebsiteSecurityPolicy'"></label>
+            <i class="bar"></i>
+            <p class="help-block" style="margin-left: 0px" v-t="'global.plzEnterlink'"></p>
+          </div>
+          <div class="form-group-m">
+            <input type="text" @invalid.prevent required="required" id="odoi" v-model="focusedSite.footer.odoi">
+            <label for="odoi" class="input-label" v-t="'footer.openDeclarationOfInformation'"></label>
+            <i class="bar"></i>
+            <p class="help-block" style="margin-left: 0px" v-t="'global.plzEnterlink'"></p>
+          </div>
+          <div class="form-group-m">
+            <input type="text" @invalid.prevent required="required" id="tsrc" v-model="focusedSite.footer.tsrc">
+            <label for="tsrc" class="input-label" v-t="'footer.thisSiteIsesRegularChinese'"></label>
+            <i class="bar"></i>
+            <p class="help-block" style="margin-left: 0px" v-t="'global.plzEnterlink'"></p>
+          </div>
+          <div class="form-group-m">
+            <div class="title line-block m-r" v-t="'footer.suggestset'"></div>
+            <div class="ct-checkbox-m line-block p-t-xxs">
+              <input type="checkbox" @invalid.prevent id="footerSuggest" v-model="focusedSite.footer.suggest" class="ct-switch-m">
+              <label for="footerSuggest"></label>
+            </div>
+            <p class="help-block" style="margin-left: 0px" v-t="'footer.browser'"></p>
+          </div>
+          <div class="m-t-lg p-md text-c border-t border-fresh">
+            <button class="ct-btn btn-md btn-min-md btn-secondary m-r ct-ripple radius-xs" @click="setVal('focusedPage' , 'gadget')">
+              <ct-svg key="times" alt="times" class="line-block" svg-src="#{BASE}/img/times.svg"></ct-svg>{{$t('global.cancel')}}
+            </button>
+            <button class="ct-btn btn-md btn-min-md btn-confirm ct-ripple radius-xs" @click="updateFooter">
+              <ct-svg key="check" alt="check" class="line-block" svg-src="#{BASE}/img/check.svg"></ct-svg>{{$t('global.save')}}
+            </button>
+          </div>
+        </form>
+      </div>
+      <div class="gd-sm1"></div>
+    </div>
+    <!-- siteFooter end -->
+    <!-- subsite start -->
+    <div class="ct-row" v-if="getVal('focusedPage') == 'subSite'">
+      <div class="gd-sm1"></div>
+      <div class="gd-sm10 subpage">
+        <div class="subpage-top bg-fresh  text-primary text-l">
+          <h2 v-t="'mainPart.subManagement'"></h2>
+        </div>
+        <div class="m-l-sm m-r-sm m-t-sm text-r">
+          <button type="submit" class="m-r-xs ct-btn btn-md radius-xs btn-primary ct-ripple" @click="setVal('subSiteIsShow' ,!getVal('subSiteIsShow'))">
+            <ct-svg key="plus" class="btn-svg" svg-src="#{BASE}/img/plus.svg" alt="plus"></ct-svg>
+            {{$t('mainPart.addSubSite')}}
+          </button>
+        </div>
+        <div class="inputblock" v-if="getVal('subSiteIsShow')">
+          <div class="text-primary text-l p font-bold m-b-sm border-b border-fresh bg-fresh radius-t" v-t="'mainPart.addSubSite'"></div>
+          <form @submit.prevent id="inputblock-form" class="form-horizontal m-sm">
+            <div class="form-flex">
+              <div class="form-group-m">
+                <input @invalid.prevent required="required" id="inputname" type="text" v-model="focusedSubSite.name">
+                <label for="inputname" class="input-label">{{$t('mainPart.subName')}}</label>
+                <i class="bar"></i>
+              </div>
+              <div class="form-group-m">
+                <input @invalid.prevent required="required" id="inputname2" type="text" v-model="focusedSubSite.upath">
+                <label for="inputname2" class="input-label">{{$t('mainPart.directoryName')}}</label>
+                <i class="bar"></i>
+              </div>
+              <div class="form-group-m select p-r-md" :class="{'select-focus':getVal('subSiteLang')}" style="cursor: pointer;">
+                <input required="required" type="text" @invalid.prevent :value="focusedSubSite.lang ? $t('mainPart.' + focusedSubSite.lang) : '' "
+                 @click.stop="setVal('subSiteLang' ,!getVal('subSiteLang'))">
+                <input type="hidden">
+                <label for="olol">
+                  <i class="input-label-toggle input-label-icon" aria-hidden="true">
+                    <ct-svg svg-src="#{BASE}/img/chevron-down.svg" alt="cdown" title="cdown" key="cdown"></ct-svg>
+                  </i>
+                </label>
+                <label for="olol" class="input-label">{{$t('mainPart.optionLang')}}</label>
+                <i class="bar"></i>
+                <div class="select-menu-container select" :class="{ 'select-visible' : getVal('subSiteLang') }">
+                  <ul class="select-menu" style="cursor: pointer; width: 94%;">
+                    <li class="select-item" v-for=" item in ct$installed.data.siteserver.langs" @click="focusedSubSite.lang=item;setVal('subSiteLang',false);">{{
+                      $t('mainPart.' + item) }}</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div class="border border-fresh radius-sm m-b-sm">
+              <div class="p-t-sm p-l-md radius-sm text-primary">
+                <div class="subsite-pri line-block">
+                  <ct-svg key="subsite-permission" svg-src="#{BASE}/img/subsite-permission.svg" alt="angle-up"></ct-svg>
+                </div>
+                <div class="subdite-pri-title line-block" v-t="'mainPart.setPermissions'"></div>
+              </div>
+              <div class="form-inline p-lr-md m-t">
+                <div class="form-group-m select p-r-md" :class="{'select-focus':getVal('userState')}" style="width: 40%; cursor: pointer;">
+                  <input required="required" type="text" @click.stop.prevent="toKeyInUser" @keyup="toKeyInUser" v-model="keyInUser">
+                  <input type="hidden">
+                  <label for="qwe">
+                    <i class="input-label-toggle input-label-icon" aria-hidden="true">
+                      <ct-svg svg-src="#{BASE}/img/chevron-down.svg" alt="cdown" title="cdown" key="cdown"></ct-svg>
+                    </i>
+                  </label>
+                  <label for="qwe" class="input-label" v-t="'mainPart.addManager'"></label>
+                  <i class="bar"></i>
+                  <div class="select-menu-container select" :class="{'select-visible':getVal('userState')}">
+                    <ul class="select-menu" style="cursor: pointer; width: 94%;">
+                      <li class="select-item" v-for=" item in userSeeker" @click="focusedSubSite.selectedAdmin=item;keyInUser=item.name;setVal('userState',false)">{{
+                        item.username ? item.username+'('+item.name+')': item.name }}</li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="form-group-m">
+                  <button type="submit" class="m-r-xs ct-btn btn-md radius-xs btn-confirm ct-ripple" @click="setAdmins()" v-t="'global.add'"></button>
+                </div>
+              </div>
+              <div class="table-responsive p-lr-md">
+                <table class="ct-table table-striped table-hover">
+                  <thead class="thead-light">
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col" v-t="'global.user'"></th>
+                      <th scope="col" v-t="'global.del'"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for=" ( item , index ) in focusedSubSite.admins">
+                      <th scope="row"> {{index+1}} </th>
+                      <td>
+                        {{item.name}}
+                      </td>
+                      <td>
+                        <div @click="delAdmins(item)">
+                          <ct-svg key="trash-alt" class="svgicon-delete m-t-o-xs" svg-src="#{BASE}/img/trash-alt.svg" alt="trash-alt"></ct-svg>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="text-c m-t-md">
+              <button type="submit" class="m-r-xs ct-btn btn-md btn-min-sm btn-primary ct-ripple radius-xs" @click="insertSubSite">
+                {{$t('mainPart.setup')}}
+              </button>
+            </div>
+          </form>
+        </div>
+        <div class="m-l-sm p-tb"> {{$t('mainPart.enableNumber')}} ( {{ focusedSubSiteList.filter( function (item) {return item.enabled} ).length }} ) ／ {{$t('mainPart.canBeEnableNumber')}} ( {{ct$installed.data.siteserver.subsite}} )
+        </div>
+        <div class="table-responsive p-lr-md">
+          <table class="ct-table table-striped table-hover">
+            <thead class="thead-light">
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">{{$t('global.stop')}}</th>
+                <th scope="col">{{$t('mainPart.siteName')}}</th>
+                <th scope="col">{{$t('mainPart.directoryName')}}</th>
+                <th scope="col">{{$t('mainPart.managementUser')}}</th>
+                <th scope="col">{{$t('global.manage')}}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <template v-for=" ( subSite , index ) in focusedSubSiteList">
+                <tr>
+                  <th scope="row"> {{index+1}} </th>
+                  <td>
+                    <div class="ct-switch p-t-xs">
+                      <input @invalid.prevent required="required" @change="updateSubSite(subSite)" :id="'switch-primary'+index"
+                       name="someSwitchOption001" type="checkbox" v-model="subSite.enabled">
+                      <label :for="'switch-primary'+index" class="switch-primary"></label>
+                    </div>
+                  </td>
+                  <td> <a :href="'/nss/s/'+subSite.upath" target="_blank"> {{subSite.name}} </a> </td>
+                  <td>{{subSite.upath}}</td>
+                  <td>{{subSite.allAdmins}}</td>
+                  <td>
+                    <div v-if="getVal('subSiteState') === index " class="subsite-icon line-block" @click="setVal('subSiteState' , -1)">
+                      <ct-svg key="pencil" svg-src="#{BASE}/img/pencil.svg" alt="pencil"></ct-svg>
+                    </div>
+                    <div v-else class="subsite-icon line-block" @click="setVal('subSiteState' , index)">
+                      <ct-svg key="pencil" svg-src="#{BASE}/img/pencil.svg" alt="pencil"></ct-svg>
+                    </div>
+                    <div class="subsite-icon line-block" @click="delSubSite(subSite)">
+                      <ct-svg key="cross" svg-src="#{BASE}/img/cross.svg" alt="cross"></ct-svg>
+                    </div>
+                  </td>
+                </tr>
+                <tr class="subsite-edit" v-if="getVal('subSiteState') === index">
+                  <td colspan="6">
+                    <div class="p-md m-xs" style="background-color: #fff;">
+                      <div class="form-horizontal">
+                        <div class="form-group-m line-block m-r" style="width: 40%">
+                          <input @invalid.prevent required="required" id="inputname" type="text" v-model="subSite.name">
+                          <label for="inputname" class="input-label">{{$t('mainPart.subName')}}</label>
+                          <i class="bar"></i>
+                        </div>
+                        <div class="form-group-m select line-block" style="width: 30%; cursor: pointer;" :class="{'select-focus':getVal('nsubSiteLang')}">
+                          <input required="required" type="text" @invalid.prevent :value="$t('mainPart.' + subSite.lang)"
+                           @click.stop="setVal('nsubSiteLang' ,!getVal('nsubSiteLang'))">
+                          <input type="hidden">
+                          <label for="olol" @click.stop="setVal('nsubSiteLang' ,!getVal('nsubSiteLang'))">
+                            <ct-svg class="input-label-toggle input-label-icon" svg-src="#{BASE}/img/chevron-down.svg" key="toogle"
+                             remark="展開更多"></ct-svg>
+                          </label>
+                          <label for="olol" class="input-label">{{$t('mainPart.optionLang')}}</label><i class="bar"></i>
+                          <div class="select-menu-container select" :class="{ 'select-visible' : getVal('nsubSiteLang') }">
+                            <ul class="select-menu">
+                              <li class="select-item" v-for=" item in ct$installed.data.siteserver.langs" @click="subSite.lang=item;setVal('nsubSiteLang',false);">{{
+                                $t('mainPart.'+ item) }}</li>
+                            </ul>
+                          </div>
+                        </div>
+                        <div class="border border-fresh radius-sm m-b-sm">
+                          <div class="p-t-sm p-l-md radius-sm text-primary">
+                            <div class="subsite-pri line-block">
+                              <ct-svg key="subsite-permission" svg-src="#{BASE}/img/subsite-permission.svg" alt="angle-up"></ct-svg>
+                            </div>
+                            <div class="subdite-pri-title line-block" v-t="'mainPart.setPermissions'"></div>
+                          </div>
+                          <div class="form-inline p-lr-md m-t">
+                            <div class="form-group-m select p-r-md" :class="{'select-focus':getVal('nuserState')}" style="width: 40%; cursor: pointer;">
+                              <input required="required" type="text" @invalid.prevent @click.stop.prevent="toKeyInUser('n')" @keyup="toKeyInUser('n')"
+                               v-model="nkeyInUser">
+                              <input type="hidden">
+                              <label for="qwe" @click.stop.prevent="toKeyInUser('n')">
+                                <ct-svg class="input-label-toggle input-label-icon" svg-src="#{BASE}/img/chevron-down.svg" key="toogle"
+                                 remark="展開更多"></ct-svg>
+                              </label>
+                              <label for="qwe" class="input-label" v-t="'mainPart.addManager'"></label>
+                              <i class="bar"></i>
+                              <div class="select-menu-container select" :class="{'select-visible':getVal('nuserState')}">
+                                <ul class="select-menu" style="width: 95%;">
+                                  <li class="select-item" v-for=" item in userSeeker" @click="subSite.selectedAdmin=item;nkeyInUser=item.name;setVal('nuserState',false)">{{
+                                    item.username ? item.username+'('+item.name+')': item.name }}</li>
+                                </ul>
+                              </div>
+                            </div>
+                            <div class="form-group-m">
+                              <button type="submit" class="m-r-xs ct-btn btn-md radius-xs btn-confirm ct-ripple" @click="setAdmins(subSite)"
+                               v-t="'global.add'"></button>
+                            </div>
+                          </div>
+                          <div class="table-responsive p-lr-md">
+                            <table class="ct-table table-striped table-hover">
+                              <thead class="thead-light">
+                                <tr>
+                                  <th scope="col">#</th>
+                                  <th scope="col" v-t="'global.user'"></th>
+                                  <th scope="col" v-t="'global.del'"></th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr v-for=" ( item , index ) in subSite.admins">
+                                  <th scope="row"> {{index+1}} </th>
+                                  <td>
+                                    {{item.name}}
+                                  </td>
+                                  <td>
+                                    <div @click="delAdmins(item , subSite)">
+                                      <ct-svg key="trash-alt" class="svgicon-delete m-t-o-xs" svg-src="#{BASE}/img/trash-alt.svg" alt="trash-alt"></ct-svg>
+                                    </div>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                        <div class="text-c m-t-md">
+                          <button type="submit" class="m-r-xs ct-btn radius-xs btn-md btn-min-sm btn-primary ct-ripple" @click="updateSubSite(subSite)">
+                            {{$t('mainPart.change')}}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="gd-sm1"></div>
+    </div>
+    <!-- subsite end -->
+    <!-- permission site admin start -->
+    <div class="ct-row" v-else-if="eqVal('focusedPage' , 'permission') && ct$isSiteAdmin">
+      <div class="gd-sm1"></div>
+      <div class="gd-sm10 subpage">
+        <div class="subpage-top bg-fresh  text-primary text-l">
+          <h2 class="float-l" v-t="'mainPart.viewSitePermissions'"></h2>
+        </div>
+        <div class="p-tb-sm ct-tree-block">
+          <ul class="ct-tree">
+            <li>
+              <input type="checkbox" id="tree-index" checked="checked">
+              <div>
+                <label for="tree-index">{{$t('global.home')}}
+                  <button class="tree-icon ct-btn btn-min-xs btn-primary ct-ripple" @click="toPermissionDetail">
+                    <ct-svg key="search" alt="search" class="svg-white line-block" svg-src="#{BASE}/img/search.svg"></ct-svg>{{$t('mainPart.view')}}
+                  </button>
+                </label>
+              </div>
+              <show-permission-all-list :sitetree="tree" @direct-top-permission="toPermissionDetail"></show-permission-all-list>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="gd-sm3"></div>
+    </div>
+    <!-- permission site admin end -->
+    <!-- permission not start admin start -->
+    <div class="ct-row" v-else-if="eqVal('focusedPage' , 'permission') && !ct$isSiteAdmin">
+      <div class="gd-sm1"></div>
+      <div class="gd-sm10 subpage">
+        <div class="subpage-top bg-fresh  text-primary text-l">
+          <h2 v-t="'mainPart.viewPersonalPermissions'"></h2>
+        </div>
+        <div class="p-tb-sm ct-tree-block">
+          <ul class="ct-tree">
+            <li>
+              <input @invalid.prevent required="required" id="person-list-index" checked="checked" type="checkbox">
+              <label for="person-list-index">{{focusedPermissionSiteDMap.heading}}
+                <div v-for="module in focusedPermissionSiteDMap.mods">
+                  <span class="tree-arr"></span>
+                  <span class="tree-gadget">{{module.name}}</span>
+                  <span class="tree-icon icon-bg1" v-if="module.manage">
+                    <ct-svg class="svg-white line-block" svg-src="#{BASE}/img/circle.svg" key="circle" alt="circle"></ct-svg>{{$t('global.use')}}
+                  </span>
+                  <span class="tree-icon icon-bg2" v-if="module.use">
+                    <ct-svg class="svg-white line-block" svg-src="#{BASE}/img/circle.svg" key="circle" alt="circle"></ct-svg>{{$t('global.use')}}
+                  </span>
+                </div>
+              </label>
+              <show-permission-personal-list :sdmap='focusedPermissionSiteDMap.child'></show-permission-personal-list>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="gd-sm1"></div>
+    </div>
+    <!-- permission site admin end -->
+    <!-- permissionDetail start -->
+    <div class="ct-row" v-else-if="eqVal('focusedPage' , 'permissionDetail')">
+      <div class="gd-sm1"></div>
+      <div class="gd-sm10 subpage">
+        <div class="subpage-top bg-fresh  text-primary text-l">
+          <h2 v-t="'mainPart.viewSitePermissions'"></h2>
+        </div>
+        <div class="p-tb-sm">
+          <div class="p-tb-sm">
+            <breadcrumb :nowpage="focusedPermissionPage" :sitemap="ct$allPage" :pageState="getVal('focusedPage')"></breadcrumb>
+            <div class="p-md">
+              <div class="ct-row border border-fresh">
+                <div class="gd-sm2 border-r border-fresh p-sm text-c text-primary bg-fresh">{{$t('mainPart.pageManager')}}</div>
+                <div class="gd-sm10 p-t-sm p-l-xs">
+                  <div class="ct-chip chip-primary" v-for="(item , index) in focusedPermissionPage.admins"><span>{{item.username
+                      ? item.username+'('+item.name+')' : item.name }}</span>
+                    <button type="button" class="ct-chip-remove ct-ripple" @click="focusedPermissionPage.admins.splice(index , 1)">
+                      <ct-svg key="cross" alt="cross" class="line-block" svg-src="#{BASE}/img/cross.svg"></ct-svg>
+                    </button>
+                  </div>
+                  <div class="ct-chip chip-primary" v-for="(item , index) in focusedPermissionPage.admins_groups"><span>{{item.username
+                      ? item.username+'('+item.name+')' : item.name }}</span>
+                    <button type="button" class="ct-chip-remove ct-ripple" @click="focusedPermissionPage.admins_groups.splice(index , 1)">
+                      <ct-svg key="cross" alt="cross" class="line-block" svg-src="#{BASE}/img/cross.svg"></ct-svg>
+                    </button>
+                  </div>
+                  <!--div class="ct-chip chip-primary" v-for="(item , index) in focusedPermissionPage.restricts_group"><span>{{item.username ? item.username+'('+item.name+')' : item.name }}</span>
+                    <button type="button" class="ct-chip-remove ct-ripple" @click="pageAGList.splice(index , 1)">
+                      <ct-svg key="cross" alt="cross" class="line-block" svg-src="#{BASE}/img/cross.svg"></ct-svg>
+                    </button>
+                  </div>
+                  <div class="ct-chip chip-primary" v-for="(item , index) in focusedPermissionPage.restricts"><span>{{item.username ? item.username+'('+item.name+')' : item.name }}</span>
+                    <button type="button" class="ct-chip-remove ct-ripple" @click="pageAGList.splice(index , 1)">
+                      <ct-svg key="cross" alt="cross" class="line-block" svg-src="#{BASE}/img/cross.svg"></ct-svg>
+                    </button>
+                  </div-->
+                </div>
+              </div>
+            </div>
+            <div class="table-responsive p-lr-md">
+              <table class="ct-table table-striped table-hover table-bordered">
+                <thead class="thead-light">
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">{{$t('mainPart.itemNameMod')}}</th>
+                    <th scope="col">{{$t('global.manage')}}</th>
+                    <th scope="col">{{$t('global.use')}}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="mod in focusedPermissionDMap" v-if="!mod.destroy">
+                    <th scope="row">1</th>
+                    <td>{{mod.setting.name}}</td>
+                    <td>
+                      <div class="ct-chip chip-primary m-r-xs" v-for="(group , index) in mod.admins_groups"><span>{{group.name}}</span>
+                        <button type="button" class="ct-chip-remove ct-ripple" @click="mod.admins_groups.splice(index , 1)">
+                          <ct-svg key="cross" alt="cross" class="line-block" svg-src="#{BASE}/img/cross.svg"></ct-svg>
+                        </button>
+                      </div>
+                      <div class="ct-chip chip-primary m-r-xs" v-for="(user , index) in mod.admins"><span>{{user.username}}({{user.name}})</span>
+                        <button type="button" class="ct-chip-remove ct-ripple" @click="mod.admins.splice(index , 1)">
+                          <ct-svg key="cross" alt="cross" class="line-block" svg-src="#{BASE}/img/cross.svg"></ct-svg>
+                        </button>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="text-primary" v-if="mod.setting.login"><span>{{$t('mainPart.modSet')}}</span></div>
+                      <div class="ct-chip chip-primary m-r-xs" v-for="(group , index) in mod.restricts_group"><span>{{group.name}}</span>
+                        <button type="button" class="ct-chip-remove ct-ripple" @click="mod.restricts_group.splice(index , 1)">
+                          <ct-svg key="cross" alt="cross" class="line-block" svg-src="#{BASE}/img/cross.svg"></ct-svg>
+                        </button>
+                      </div>
+                      <div class="ct-chip chip-primary m-r-xs" v-for="(user , index) in mod.restricts"><span>{{user.username}}({{user.name}})</span>
+                        <button type="button" class="ct-chip-remove ct-ripple" @click="mod.restricts.splice(index , 1)">
+                          <ct-svg key="cross" alt="cross" class="line-block" svg-src="#{BASE}/img/cross.svg"></ct-svg>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="m-t-lg p-md text-c border-t border-fresh">
+              <button class="ct-btn btn-md btn-min-md btn-secondary m-r ct-ripple" @click="setVal('focusedPage','permission')">
+                <ct-svg key="times" alt="times" class="line-block" svg-src="#{BASE}/img/times.svg"></ct-svg>{{$t('global.cancel')}}
+              </button>
+              <button class="ct-btn btn-md btn-min-md btn-confirm ct-ripple" @click="updatePermissionDetail">
+                <ct-svg key="check" alt="check" class="line-block" svg-src="#{BASE}/img/check.svg"></ct-svg>{{$t('global.save')}}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="gd-sm1"></div>
+    </div>
+    <!-- style start -->
+    <div class="ct-row" v-if=" ['style'].indexOf( getVal('focusedPage') ) != -1">
+      <div class="gd-sm1"></div>
+      <div class="gd-sm10 subpage">
+        <div class="subpage-top bg-fresh text-primary text-l">
+          <h2 remark="版面風格">{{$t('mainPart.layoutstyle')}}</h2>
+        </div>
+        <div class="ct-row gd-sm12 p-sm">
+          <div class="sidetitle m-r p-xs text-primary font-bold text-l" remark="一般版型">
+            <ct-svg key="enter" alt="enter" class="sidetitle-icon" svg-src="#{BASE}/img/enter.svg"></ct-svg>{{$t('mainPart.generalversion')}}
+          </div>
+          <ul class="ct-row ct-pattern-grid">
+            <li class="gd-sm3 ct-pattern-item m-b-sm" v-for="(item ,index) in ct$commonTheme">
+              <div class="ct-pattern-icons">
+                <div class="ct-pattern-zoom" title="預覽大圖" @click="patternClickOn(item)"></div>
+                <div class="ct-pattern-done" title="套用" @click="setTheme(item)"></div>
+              </div>
+              <div class="ct-pattern-img">
+                <img :src="item.icon.split('.')[0]+'s.'+item.icon.split('.')[1]" :alt="item.top.name" :title="item.top.name">
+              </div>
+              <div class="ct-pattern-details" :class="{'active' : ct$iscurrentTheme(item)}">
+                <p>{{ item.top.name }}</p>
+                <!--</span>備註說明備註說明備註說明備註說明備註說明備註說明</span>-->
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div class="ct-row gd-sm12 p-sm">
+          <div class="sidetitle m-r p-xs text-primary font-bold text-l" remark="客製版型">
+            <ct-svg key="enter" alt="enter" class="sidetitle-icon" svg-src="#{BASE}/img/enter.svg"></ct-svg>{{$t('mainPart.customversion')}}
+          </div>
+          <ul class="ct-row ct-pattern-grid">
+            <li class="gd-sm3 ct-pattern-item m-b-sm" v-for="(item ,index) in ct$customTheme">
+              <div class="ct-pattern-icons">
+                <div class="ct-pattern-zoom" title="預覽大圖" @click="patternClickOn(item)"></div>
+                <div class="ct-pattern-done" title="套用" @click="setTheme(item)"></div>
+              </div>
+              <div class="ct-pattern-img">
+                <img :src="item.icon.split('.')[0]+'s.'+item.icon.split('.')[1]" :alt="item.top.name" :title="item.top.name">
+              </div>
+              <div class="ct-pattern-details" :class="{'active' : ct$iscurrentTheme(item)}">
+                <p>{{ item.top.name }}</p>
+                <!--</span>備註說明備註說明備註說明備註說明備註說明備註說明</span>-->
+              </div>
+            </li>
+          </ul>
+        </div>
+        <!--lightbox-->
+        <div class="nivo-lightbox-overlay nivo-lightbox-theme-default nivo-lightbox-effect-fade" :class="{ 'nivo-lightbox-open': patternClick }">
+          <div class="nivo-lightbox-wrap">
+            <div class="nivo-lightbox-content">
+              <div class="nivo-lightbox-image" style="line-height: 615px; height: 615px;">
+                <img :src="exampleImg" title="範例圖片">
+              </div>
+            </div>
+            <div class="nivo-lightbox-title-wrap">
+              <span class="nivo-lightbox-title spacing-md">{{ patternCount }}欄式</span>
+              <span class="nivo-lightbox-title spacing-md">{{ patternCount }}/3</span>
+            </div>
+          </div>
+          <a @click.prevent="patternChange(-1)" href="#" class="nivo-lightbox-nav nivo-lightbox-prev" style="display: block;"
+           alt="上一張" title="上一張" remark="上一張"></a>
+          <a @click.prevent="patternChange(1)" href="#" class="nivo-lightbox-nav nivo-lightbox-next" style="display: block;"
+           alt="下一張" title="下一張" remark="下一張"></a>
+          <a @click.prevent="patternClickOff" href="#" class="nivo-lightbox-close" title="關閉"></a>
+        </div>
+      </div>
+      <div class="gd-sm1"></div>
+    </div>
+    <!-- style end -->
+    <!-- all page layout start 
+    <div class="ct-row" v-if=" ['allPageLayout'].indexOf( getVal('focusedPage') ) != -1">
+      <div class="gd-sm1"></div>
+      <div class="gd-sm10 subpage">
+        <div class="subpage-top bg-fresh text-primary text-l">
+          <h2 remark="管理版面配置預設值">{{$t('mainPart.managelayout')}}</h2>
+        </div>
+        <div class="gd-sm12">
+          <div class="p-l-md" style="letter-spacing: 1px; font-size:1.125rem;margin-top: 10px; margin-bottom: 10px;" remark="此設定將套用至全站頁面，為統一的版面配置。(仍可至該頁面修改單一頁面的版面配置)">{{$t('mainPart.managelayoutexplain')}}</div>
+          <div class="gd-sm2" v-for="(layout,index) in ct$layouts" @click="setSiteLayout(layout)">
+            <div class="ct-fieldset m-md">
+              <img :src="ct$getPackagePath() + '/img/layout/layoutfield'+index+'.svg'" :alt="'欄位'+layout.layout" :title="'欄位'+layout.layout">
+            </div>          
+          </div>
+        </div>
+        <div class="gd-sm12 p-xs text-c">             
+          <button class="m-r-xs ct-btn btn-md btn-min-xs btn-secondary ct-ripple radius-xs" @click.prevent="setVal('focusedPage','layouts')" remark="返回版面配置">{{$t('sideBar.backlayoutstyle')}}</button>
+        </div>
+      </div>
+      <div class="gd-sm1"></div>
+    </div>-->
+    <!-- all page layout end -->
+  </div>
+  <!-- main end -->
+</div>

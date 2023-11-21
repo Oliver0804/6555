@@ -1,0 +1,26 @@
+{  
+	"main":"theme",
+	"base":"#{BASE}",
+	"components":[  
+		"side-sitemap-ul",
+		"sitemap-ul-edit",
+		"breadcrumb",
+		"show-permission-all-list",
+		"show-permission-personal-list",
+		"sitemap-ul",
+		"navigation",
+		"right-header-bar"
+	],
+	"i18n":"theme.json",
+	"icon":"img/template-01.jpg",
+	"icon-s":"img/template-01s.jpg",
+	"freeze":"freeze.ejs",
+	"epaper":"epaper.ejs",
+	"quest":"quest.ejs",
+	"css":[  
+		"/css/basic.css",
+		"/css/theme.css",
+		"/css/theme-cmgshtp.css"
+	],
+	"v":3
+}

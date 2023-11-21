@@ -1,0 +1,13 @@
+<!--draggable :element="'ul'" :list="node" class="list-unstyled" @end="changeTree" :options="{dragClass:'edit-list-drag' , ghostClass: 'edit-list-ghost', animation: 150 , group:{ name:'g1'}}"-->
+<ul class="list-unstyled">
+    <li v-for="(item , index) in nNode">
+        <a class="text-primary border border-fresh radius p-xxs bg-fresh" :class="{'bg-fresh':first}">
+	        <div class="page-open-name">{{ item.hide ?  '(' + $t('mainPart.hide') + ')' : '' }}{{item.heading}}</div>
+	        <div class="page-open-img" v-if="first" :class="{'page-open' : item.boolean}" @click="onAndOff(index)">
+	        	<ct-svg alt="down"  svg-src="#{BASE}/img/chevron-down.svg" key="down"></ct-svg>
+	        </div>
+        </a>
+        <ul is="side-sitemap-ul" v-show="item.boolean" :node="item.child"></ul>
+    </li>
+ </ul>
+<!--/draggable-->

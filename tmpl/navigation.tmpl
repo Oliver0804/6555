@@ -1,0 +1,25 @@
+<nav class="navbar">
+  <label for="show-menu" class="show-menu">
+    <ct-svg class="ct-hamburger" svg-src="#{BASE}/img/hamburger.svg" :alt="$t('mainPart.expand')" :title="$t('mainPart.expand')"></ct-svg>
+  </label>
+  <input type="checkbox" id="show-menu" role="button" :title="$t('mainPart.expand')">
+  <ul id="menu">
+    <li v-for="( item , key ) in viewTree" @focusin="focus=key" @focusout="focus=-key" @mouseover="hoverLi(item._id)">
+      <a :class="{active: focus===key}" :title="item.pageTypeNo==1?item.heading+$t('global.openNewTab'):item.heading" :href="item.pageTypeNo==2?item.child.length?item.child[0].name:'javascript:void(0)':item.name" :target="item.pageTypeNo==1? '_blank':'_self'">{{ item.heading }}</a>
+      <div class="navrwd" @click.stop="focus=focus===key?'close':key" title="展開">
+        <ct-svg v-if="item.child.length" class="navrwd-svg" svg-src="#{BASE}/img/chevron-down.svg"></ct-svg>
+      </div>
+      <ul class="menuhidden" :id="item._id" :class="{'navbar-menu': focus===key, 'noItem': item.child.length === 0}">
+        <li class="menu-mobile" v-for="(item2, index) in item.child">
+          <a v-if="index == item.child.length-1" :title="item2.pageTypeNo==1?item2.heading+$t('global.openNewTab'):item2.heading" :href="item2.pageTypeNo==2?item2.child.length?item2.child[0].name:'javascript:void(0)':item2.name" :target="item2.pageTypeNo==1? '_blank':'_self'">{{item2.heading }}</a>
+          <a v-else :title="item2.pageTypeNo==1?item2.heading+$t('global.openNewTab'):item2.heading" :href="item2.pageTypeNo==2?item2.child.length?item2.child[0].name:'javascript:void(0)':item2.name" :target="item2.pageTypeNo==1? '_blank':'_self'">{{item2.heading }}</a>
+        </li>
+		<li class="menu-web">
+			<a v-for="item3 in item.child" :title="item3.pageTypeNo==1?item3.heading+$t('global.openNewTab'):item3.heading"
+			 :href="item3.pageTypeNo==2?item3.child.length?item3.child[0].name:'javascript:void(0)':item3.name" :target="item3.pageTypeNo==1? '_blank':'_self'">{{
+				item3.heading }}</a>
+		</li>
+      </ul>
+    </li>
+  </ul>
+</nav>

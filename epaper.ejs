@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="<%= $site.lang %>" height="1000%" width="100%">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<% for ( var i = 0 ; i < $theme.length ; i++ ) {%>
+			<link rel="stylesheet" href="<%=$theme[i]%>">
+		<% } %>
+		<meta name="keyword" content="<%= $doc.keyword.join() %>">
+		<link rel="shortcut icon" type="image/png" href="<%= _.get($site, 'logo.favicon') || '/favicon/default.png' %>"/>
+		<% if($site.seo) for(var i=0; i< $site.seo.length; i++) { %>
+			<meta name="<%=$site.seo[i].name%>" content="<%=$site.seo[i].content%>">
+		<% } %>
+		<% if( process.env.NODE_ENV == 'development' ) {%>
+			<script src="/src/plugins/vue/vue.js" type="text/javascript" charset="utf-8"></script>
+		<% }else{ %>
+			<script src="/src/plugins/vue/vue.min.js" type="text/javascript" charset="utf-8"></script>
+		<% } %>
+		<script type="text/javascript" src="/src/plugins/vue/vue-i18n.js" charset="utf-8"></script>
+	</head>
+	<body class="theme-bg ct-row" height="100%" width="100%">
+		<div id="ct-content" class="ct-row" >
+			<div class="ct-row gd-lg12">
+				<% if($slot[0]){ %>
+				<h3 class="font-bold notice_titlebg m-b-md"><%= _.get($doc, $slot[0]) %></h3>
+				<% } %>
+				<div class="ct-row">
+					<% if($slot[2]){ %>
+					<p class="float-r text-secondary" style="font-size: 0.95em;">
+						<span class="font-bold">{{ $t('FEZ001') }}</span><%= _.get($doc, $slot[2]) %>
+					</p>
+					<% } %>
+					<% if($slot[3]){ %>
+					<p class="float-r text-secondary" style="font-size: 0.95em;">
+						<span class="font-bold">{{ $t('FEZ002') }}</span><%= _.get($doc, $slot[3]) %><span class="m-l m-r">|</span>
+					</p>
+					<% } %> 
+				</div>
+				<!-- ↓↓ 請勿在此區塊使用class樣式 ↓↓ -->
+				<div class="epaper-content"  border="0" valign="center" cellpadding="0" cellspacing="0" style="background:#f4f4f4;position: fixed; left: 0; top: 0; width:100%; height:100%; z-index: 9999;overflow: scroll">
+					<div width="800px" align="center" border="0" cellpadding="0" cellspacing="0" style="font-family: Microsoft JhengHe;">
+						<table border="0" cellpadding="0" cellspacing="0">
+							<tbody>
+								<tr>
+										<% if($domain){ %>
+									<td width="800px" height="148px" border="0" style="background-image: url(<%='http://'+$domain + '/src/images/epaper-top-3.jpg' %>);font-family: Microsoft Yahei;">
+										<% if(_.get($site , 'logo.display') == "show"){ %>
+										<img src="<%= _.get($site , 'logo.img') %>" alt="<%= _.get($site , 'logo.name') %>" style="max-width: 400px;max-height:70px;margin-left: 30px">
+										<% }else{ %>
+										<p style="max-width:400px; margin-left: 30px; font-family: Microsoft JhengHe;font-weight: 600; font-size: 1.3rem; color:#545454;white-space: nowrap; overflow: hidden; text-overflow: ellipsis"> <%= _.get($site , 'logo.name' , 'title') %> </p>
+										<% } %>
+									</td>
+									<% }%>
+								</tr>
+							</tbody>
+						</table>
+						<%- _.get($doc, $slot[1], '') %>
+						<table width="800px" border="0" cellpadding="0" cellspacing="0" style="background-color:#696969;color:#ffffff;font-size: 0.9rem;line-height: 1.5rem;padding:0 15px 10px 15px;font-weight: 600;padding-top: 30px;">
+								<tbody>
+									<tr>
+										<td style="padding:10px; vertical-align: top;font-family: Microsoft JhengHei;list-style: none">
+											<li style="display:inline-black"><%=_.get($site , 'footer.name' , '')%></li>
+											<li style="display:inline-black"><%=_.get($site , 'footer.addr1' , '')%></li>
+										</td>
+										<td style="padding:10px; vertical-align: top;font-family: Microsoft JhengHei;list-style: none">
+											<li>聯絡電話<%=_.get($site , 'footer.tel1' , '')%></li>
+											<li>傳真<%=_.get($site , 'footer.fax' , '')%></li>
+										</td>
+									</tr> 
+								</tbody>
+							</table>
+							<table width="800px" border="0" style="background-color: #525151;color:#d6d6d6;text-align: right;font-size: 0.9rem;padding: 10px;font-family: Microsoft JhengHei ;">
+								<tbody>
+									<tr>
+										<td style="font-family: Microsoft Yahei">
+											<%=_.get($site,'footer.copyright' , '')%>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+					</div>
+				</div>
+				<!-- ↑↑ 請勿在此區塊使用class樣式 ↑↑ -->
+			</div>
+		</div>
+		<script >
+			var i18n = new VueI18n({
+				locale: '<%= $site.lang %>',
+				messages: {
+					'en': {
+						FEZ001: 'announce:',
+						FEZ002: 'anno unit:',
+						FEZ003: 'anno date:',
+						FEZ004: 'last update:',
+						FEZ005: 'click rate:',
+						FEZ006: 'Tel',
+						FEZ007: 'Fax',
+						FEZ008: 'E-Mail',
+						FEZ009: 'Updated',
+						FEZ010: 'Total views',
+						FEZ011: 'Today visitor',
+						FEZ012: 'attachment',
+						FEZ013: 'links'
+					},
+					'zh-tw': {
+						FEZ001: '發布人：',
+						FEZ002: '發布單位：',
+						FEZ003: '發佈日期：',
+						FEZ004: '最後更新日期：',
+						FEZ005: '點擊率：',
+						FEZ006: '聯絡電話',
+						FEZ007: '傳真',
+						FEZ008: '電子信箱',
+						FEZ009: '最後更新',
+						FEZ010: '總瀏覽人次',
+						FEZ011: '今日瀏覽人次',
+						FEZ012: '相關附件',
+						FEZ013: '相關連結'
+					},
+					'zh-cn': {
+						FEZ001: '发布人：',
+						FEZ002: '发布单位：',
+						FEZ003: '发布日期：',
+						FEZ004: '最后更新日期：',
+						FEZ005: '点击率：',
+						FEZ006: '联络电话',
+						FEZ007: '传真',
+						FEZ008: '电子信箱',
+						FEZ009: '最后更新',
+						FEZ010: '总浏览人次',
+						FEZ011: '今日浏览人次',
+						FEZ012: '相关附件',
+						FEZ013: '相关连结'
+					},
+				}
+			});
+			new Vue({
+				i18n,
+				data:function(){return {
+					win:'',
+					
+				}},
+				mounted:function(){
+					this.win = window.location
+				}
+			}).$mount('#ct-content');
+		</script>
+	</body>
+</html>
