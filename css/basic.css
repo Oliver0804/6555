@@ -185,12 +185,13 @@ form {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
-  text-align: left;
+  /*text-align: left;*/
 }
 
 /**************************************************
 = basic-style
 ********************/
+/*
 .gasetting-back {
   float: left !important;
 
@@ -202,7 +203,7 @@ form {
 .htmldisplay{
   text-align: left!important;
 }
-
+*/
 
 /*
 20231114
@@ -2190,11 +2191,6 @@ h2,
 h3,
 .h3 {
   font-size: 1.125rem;
-  background-image: url(http://nss6.cybertutor.com.tw/uploads/1700556304943D3qayrf3.svg);
-  background-repeat: no-repeat;
-  background-position: left center;
-  background-size: 20px 20px;
-  padding-left: 25px;
 }
 
 h4,

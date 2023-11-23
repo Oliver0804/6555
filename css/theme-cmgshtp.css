@@ -194,9 +194,19 @@ h1 strong.picshow { position: absolute; top: -100px;}
         border-bottom: 1px solid #FFD700;
         margin-bottom: 100px;
         position: fixed;
-        top: 85px!important;;
+        top: 96px!important;
         z-index: 1001;
     }
+    .navbar li a{text-align: center!important;}
+    .navbar li:hover a {text-align: center!important;}
+    .navbar li:hover .navbar-svg { fill:#3078c8;}
+.navbar li:hover ul a,.navbar ul li a:focus + .navrwd + .menuhidden{ background-color:#efefef; color:#19387c;text-align: left;}
+.navbar li:hover ul a:hover { background-color:#19387c; color:#FFD700;}
+.navbar li .menuhidden.navbar-menu a { background-color:#FFD700; color:#313131;text-align: left;}
+.navbar li .menuhidden.navbar-menu a:hover { background-color:#3078c8; color:#ffffff;}
+.navbar li ul li + li { border-top:0px solid #ffffff;}
+.navbar li ul li a{min-width:max-content;}
+.navrwd-svg {fill:#ffffff}
 }
 /*a*/
 
